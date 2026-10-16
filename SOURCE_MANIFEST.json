@@ -89,8 +89,8 @@
     },
     {
       "path": "docs/BUILDING.md",
-      "size": 3557,
-      "sha256": "d884d6e5f673c849ef56ab63a04c3d92a84ed498374d9d08eebe25db1b870ac5"
+      "size": 4297,
+      "sha256": "ab72b317afc04e092845b4940bbb17b393cb72278276b424854c9e2d6c7024ff"
     },
     {
       "path": "docs/PUBLISHING.md",
@@ -111,6 +111,11 @@
       "path": "global.json",
       "size": 117,
       "sha256": "12977d3e63d38bc51c22c4708ccbc351af024a310de7f25ac974468b731677b3"
+    },
+    {
+      "path": "installer/ORBIT.iss",
+      "size": 2103,
+      "sha256": "08fd6ea231247bcb24b1c3c329fe8d07d0978d226d3dd3ce625e8615d31dc9d2"
     },
     {
       "path": "LICENSE",
@@ -179,8 +184,13 @@
     },
     {
       "path": "README.md",
-      "size": 5571,
-      "sha256": "5f84a4ac38e2680644341bb29a0c99174d996c49ac30a3c0e303def52afcc468"
+      "size": 6011,
+      "sha256": "a3b5b29b8b832444439b9f8c0dceb0a2c6cc2cd06f8da3e1adb41c68500bd1d2"
+    },
+    {
+      "path": "scripts/build-installer.ps1",
+      "size": 2472,
+      "sha256": "41bc05ae7f96cf0abd2a86bd78ea6408bbb38b0cb2d4bacc7bfb9bfb6382f674"
     },
     {
       "path": "scripts/build.ps1",
