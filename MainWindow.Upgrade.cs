@@ -1,0 +1,41 @@
+﻿using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Interop;
+using Orbit.Core;
+namespace OrbitLauncher;
+public partial class MainWindow {
+ record LanguageChoice(string Id,string Title);
+ void InitializeUpgrade(bool preview){
+  LanguageBox.ItemsSource=new[]{new LanguageChoice("en","English"),new LanguageChoice("ru",Loc.T("Русский"))};LanguageBox.SelectedIndex=settings.Language=="ru"?1:0;
+  GameWidthBox.Text=settings.GameWidth.ToString();GameHeightBox.Text=settings.GameHeight.ToString();FullscreenBox.IsChecked=settings.Fullscreen;MinimizeGameBox.IsChecked=settings.MinimizeOnLaunch;RememberWindowBox.IsChecked=settings.RememberWindow;ScrollLogBox.IsChecked=settings.ScrollLog;
+  if(settings.RememberWindow){Width=Math.Clamp(settings.WindowWidth,900,2400);Height=Math.Clamp(settings.WindowHeight,680,1600);}
+  MinWidth=900;MinHeight=680;
+  SourceInitialized+=(s,e)=>{var handle=new WindowInteropHelper(this).Handle;HwndSource.FromHwnd(handle)?.AddHook(WindowBoundsHook);var monitor=new MonitorInfo{Size=Marshal.SizeOf<MonitorInfo>()};if(GetMonitorInfo(MonitorFromWindow(handle,2),ref monitor)){var dpi=System.Windows.Media.VisualTreeHelper.GetDpi(this);double width=(monitor.Work.Right-monitor.Work.Left)/dpi.DpiScaleX,height=(monitor.Work.Bottom-monitor.Work.Top)/dpi.DpiScaleY;MinWidth=Math.Min(900,width);MinHeight=Math.Min(680,height);Width=Math.Min(Width,width);Height=Math.Min(Height,height);}};
+  if(!preview){try{Directory.CreateDirectory(settings.GameRoot);}catch(Exception ex)when(ex is IOException or UnauthorizedAccessException){Status(ex.Message,true);}}
+  RefreshPresets();
+ }
+ void Language_Changed(object sender,SelectionChangedEventArgs e){if(LanguageBox.SelectedItem is not LanguageChoice l)return;Loc.Language=l.Id;Loc.ApplyResources();if(initialized){categoryCache.Clear();ModsSort.ItemsSource=new[]{new ModCategory("relevance",Loc.T("По релевантности")),new ModCategory("downloads",Loc.T("Популярные")),new ModCategory("updated",Loc.T("Обновлённые")),new ModCategory("newest",Loc.T("Новые"))};ModsSort.SelectedIndex=1;settings.Language=l.Id;settings.Save();Navigate(page);UpdateChoices(selectedChoice?.Id);RefreshSkin();}}
+ void SaveUpgradeSettings(){if(!int.TryParse(GameWidthBox.Text,out int w)||!int.TryParse(GameHeightBox.Text,out int h)||w<640||w>7680||h<480||h>4320)throw new InvalidDataException(Loc.T(Loc.T("Размер окна: от 640×480 до 7680×4320.")));settings.GameWidth=w;settings.GameHeight=h;settings.Fullscreen=FullscreenBox.IsChecked==true;settings.MinimizeOnLaunch=MinimizeGameBox.IsChecked==true;settings.RememberWindow=RememberWindowBox.IsChecked==true;settings.ScrollLog=ScrollLogBox.IsChecked==true;settings.Language=Loc.Language;}
+ void SaveWindowBounds(){if(suppressProfileSave||!settings.RememberWindow)return;var rect=WindowState==WindowState.Normal?new Rect(Left,Top,ActualWidth,ActualHeight):RestoreBounds;settings.WindowWidth=rect.Width;settings.WindowHeight=rect.Height;settings.Save();}
+ LauncherSettings SettingsFor(VersionEntry v)=>new(){GameRoot=v.RootOverride??settings.GameRoot,Isolated=settings.Isolated};
+ void InstanceFolder_Click(object sender,RoutedEventArgs e){e.Handled=true;if(((Button)sender).Tag is VersionEntry v)OpenFolder(LaunchEngine.InstanceDirectory(SettingsFor(v),v.Id));}
+ void SelectedFolder_Click(object sender,RoutedEventArgs e){if(SelectedChoice is {} v)OpenFolder(LaunchEngine.InstanceDirectory(SettingsFor(v),v.Id));}
+ void SelectedMods_Click(object sender,RoutedEventArgs e){if(SelectedChoice is {} v)OpenFolder(Path.Combine(LaunchEngine.InstanceDirectory(SettingsFor(v),v.Id),"mods"));}
+ void GameRootFolder_Click(object sender,RoutedEventArgs e)=>OpenFolder(settings.GameRoot);
+ async Task StopGameAsync(){var process=game;if(process==null||process.HasExited)return;if(MessageBox.Show(Loc.T(Loc.T("Закрыть Minecraft? Сначала сохрани мир. Принудительное закрытие может потерять прогресс.")),"ORBIT",MessageBoxButton.YesNo,MessageBoxImage.Warning)!=MessageBoxResult.Yes)return;try{if(process.CloseMainWindow()){using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(8));try{await process.WaitForExitAsync(timeout.Token);return;}catch(OperationCanceledException){}}if(!process.HasExited&&MessageBox.Show(Loc.T(Loc.T("Игра не закрылась. Завершить процесс принудительно? Несохранённый прогресс будет потерян.")),"ORBIT",MessageBoxButton.YesNo,MessageBoxImage.Warning)==MessageBoxResult.Yes)process.Kill(entireProcessTree:true);}catch(Exception ex){Status(ex.Message,true);}}
+ void RefreshPresets(string? prefer=null){if(PresetBox==null)return;PresetBox.ItemsSource=SkinPresets.List();PresetBox.SelectedItem=((IReadOnlyList<SkinPreset>)PresetBox.ItemsSource).FirstOrDefault(x=>x.Id==(prefer??settings.ActiveSkinPreset));}
+ void SavePreset_Click(object sender,RoutedEventArgs e){try{if(!File.Exists(LocalSkins.SkinPath))throw new IOException(Loc.T(Loc.T("Сначала выбери PNG-скин.")));var p=SkinPresets.Save(PresetNameBox.Text,skinModel,File.ReadAllBytes(LocalSkins.SkinPath));settings.ActiveSkinPreset=p.Id;settings.Save();RefreshPresets(p.Id);Status(Loc.T(Loc.T("Шаблон сохранён.")));}catch(Exception ex){Status(ex.Message,true);}}
+ void ApplyPreset_Click(object sender,RoutedEventArgs e){if(PresetBox.SelectedItem is not SkinPreset p)return;try{skinModel=p.Model;SaveSkin(File.ReadAllBytes(SkinPresets.Image(p.Id)));settings.ActiveSkinPreset=p.Id;settings.Save();PresetNameBox.Text=p.Title;}catch(Exception ex){Status(ex.Message,true);}}
+ void DeletePreset_Click(object sender,RoutedEventArgs e){if(PresetBox.SelectedItem is not SkinPreset p)return;try{SkinPresets.Delete(p.Id);if(settings.ActiveSkinPreset==p.Id){settings.ActiveSkinPreset="";settings.Save();}RefreshPresets();}catch(Exception ex){Status(ex.Message,true);}}
+ async Task InstallModpackAsync(ModProject project){modBusy=installing=true;modInstallCts=CancellationTokenSource.CreateLinkedTokenSource(catalogCts.Token);DownloadPanel.Visibility=Visibility.Visible;ModsCancel.Visibility=Visibility.Visible;RefreshModInstallState();UpdateLaunchButton();try{using var packs=new Modpacks();var entry=await packs.InstallAsync(project,new Progress<ModProgress>(p=>{DownloadTitle.Text=Loc.T(p.Stage);DownloadBar.Value=p.Total>0?100d*p.Done/p.Total:0;DownloadPercent.Text=$"{DownloadBar.Value:0}%";DownloadDetail.Text=$"{Bytes(p.Done)} / {Bytes(p.Total)}";}),modInstallCts.Token);settings.Version=entry.Id;settings.Save();await RefreshVersions();UpdateChoices(entry.Id);DownloadBar.Value=100;DownloadTitle.Text=Loc.T(Loc.T("Установлено · "))+project.Title;ModsStatus.Text=Loc.T(Loc.T("Сборка готова. Выбери её в библиотеке и нажми Играть."));}catch(OperationCanceledException){ModsStatus.Text=Loc.T(Loc.T("Установка отменена."));}catch(Exception ex){ModsStatus.Text=ex.Message;Status(ex.Message,true);}finally{modInstallCts.Dispose();modInstallCts=null;modBusy=installing=false;ModsCancel.Visibility=Visibility.Collapsed;CancelDownloadButton.Content=Loc.T(Loc.T("Скрыть"));RefreshModInstallState();UpdateLaunchButton();}}
+ [StructLayout(LayoutKind.Sequential)] struct NativePoint{public int X,Y;}
+ [StructLayout(LayoutKind.Sequential)] struct MinMaxInfo{public NativePoint Reserved,MaxSize,MaxPosition,MinTrackSize,MaxTrackSize;}
+ [StructLayout(LayoutKind.Sequential)] struct NativeRect{public int Left,Top,Right,Bottom;}
+ [StructLayout(LayoutKind.Sequential)] struct MonitorInfo{public int Size;public NativeRect Monitor,Work;public int Flags;}
+ [DllImport("user32.dll")] static extern IntPtr MonitorFromWindow(IntPtr window,int flags);
+ [DllImport("user32.dll")] static extern bool GetMonitorInfo(IntPtr monitor,ref MonitorInfo info);
+ IntPtr WindowBoundsHook(IntPtr window,int message,IntPtr wp,IntPtr lp,ref bool handled){if(message==0x0024){var monitor=MonitorFromWindow(window,2);var info=new MonitorInfo{Size=Marshal.SizeOf<MonitorInfo>()};if(GetMonitorInfo(monitor,ref info)){var mm=Marshal.PtrToStructure<MinMaxInfo>(lp);mm.MaxPosition.X=info.Work.Left-info.Monitor.Left;mm.MaxPosition.Y=info.Work.Top-info.Monitor.Top;mm.MaxSize.X=info.Work.Right-info.Work.Left;mm.MaxSize.Y=info.Work.Bottom-info.Work.Top;Marshal.StructureToPtr(mm,lp,false);handled=true;}}return IntPtr.Zero;}
+}

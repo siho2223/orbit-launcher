@@ -1,10 +1,10 @@
-using System.IO;using System.Windows;using System.Windows.Controls;using Orbit.Core;
+﻿using System.IO;using System.Windows;using System.Windows.Controls;using Orbit.Core;
 namespace OrbitLauncher;
 public partial class MainWindow {
  async Task CheckUiAsync(string root){await LoadCatalogAsync();var reports=new List<string>();void Assert(bool test,string message){if(!test)throw new InvalidOperationException("UI check: "+message);reports.Add("PASS "+message);}
   var previous=SelectedChoice;pickerMode="Remote";pickerQuery="";ApplyPickerFilter();Assert(VersionCombo.Items.Count>50,"Remote versions visible");Assert(VersionCombo.Items.OfType<VersionEntry>().All(v=>!v.Installed),"Remote tab excludes installed profiles");int releases=VersionCombo.Items.Count;SnapshotsBox.IsChecked=true;Assert(VersionCombo.Items.Count>releases,"Snapshot switch expands list");SnapshotsBox.IsChecked=false;
-  PickerSearch.Text="1.21.11";Assert(VersionCombo.Items.Count>0&&VersionCombo.Items.OfType<VersionEntry>().All(v=>v.Id.Contains("1.21.11")),"Search filters actual picker items");VersionCombo.SelectedIndex=0;Assert(SelectedChoice is {Installed:false}&&PlayButton.Content.ToString()!.Contains("СКАЧАТЬ"),"Remote selection routes action to download");Assert(VersionPickerTitle.Text==SelectedChoice!.Id,"Picker label follows selection");
-  PickerSearch.Text="";PickerInstalledTab.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Assert(VersionCombo.Items.Count==versions.Count,"Installed tab contains only local profiles");if(VersionCombo.Items.Count>0){VersionCombo.SelectedIndex=0;Assert(PlayButton.Content.ToString()!.Contains("ИГРАТЬ"),"Installed selection routes action to play");}
+  PickerSearch.Text="1.21.11";Assert(VersionCombo.Items.Count>0&&VersionCombo.Items.OfType<VersionEntry>().All(v=>v.Id.Contains("1.21.11")),"Search filters actual picker items");VersionCombo.SelectedIndex=0;Assert(SelectedChoice is {Installed:false}&&PlayButton.Content.ToString()!.Contains(Loc.T("СКАЧАТЬ")),"Remote selection routes action to download");Assert(VersionPickerTitle.Text==SelectedChoice!.Id,"Picker label follows selection");
+  PickerSearch.Text="";PickerInstalledTab.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Assert(VersionCombo.Items.Count==versions.Count,"Installed tab contains only local profiles");if(VersionCombo.Items.Count>0){VersionCombo.SelectedIndex=0;Assert(PlayButton.Content.ToString()!.Contains(Loc.T("ИГРАТЬ")),"Installed selection routes action to play");}
   selectedChoice=previous;pickerMode="All";pickerQuery="";UpdateChoices(previous?.Id);File.WriteAllLines(Path.Combine(root,"ui-checks.txt"),reports);Navigate("Home");
  }
 

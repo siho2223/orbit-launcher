@@ -1,5 +1,5 @@
 ﻿#ifndef AppVersion
-  #define AppVersion "0.6.1"
+  #define AppVersion "0.7.0"
 #endif
 #ifndef PayloadDir
   #error PayloadDir must point to the staged runtime files
@@ -26,6 +26,8 @@ DisableDirPage=no
 DisableProgramGroupPage=yes
 AllowNoIcons=yes
 WizardStyle=modern dark
+LanguageDetectionMethod=none
+ShowLanguageDialog=yes
 SetupIconFile=..\orbit.ico
 UninstallDisplayIcon={app}\OrbitLauncher.exe
 LicenseFile=..\LICENSE
@@ -37,8 +39,8 @@ CloseApplications=no
 RestartApplications=no
 Uninstallable=yes
 [Languages]
-Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 [CustomMessages]
 russian.DesktopIcon=Создать ярлык на рабочем столе
 english.DesktopIcon=Create a desktop shortcut

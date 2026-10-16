@@ -1,70 +1,69 @@
-# ORBIT
+# ORBIT Launcher
 
-Minecraft Java Edition launcher for Windows · **0.6.1 / early preview**
+Minecraft Java launcher for Windows · **0.7.0 / preview**
 
-ORBIT — независимый лаунчер с локальными профилями, собственным интерфейсом и каталогом дополнений Modrinth. Написан на C# и WPF для .NET 8. Разрабатывается с помощью ИИ.
+ORBIT is an independent C# / WPF launcher for .NET 8, built with assistance from OpenAI Codex.
 
-![Главный экран ORBIT](docs/screenshot.png)
+![ORBIT home](docs/screenshot.png)
 
-## Возможности
+## Features
 
-- Поиск установленных Vanilla, Fabric, Forge, NeoForge и Quilt-профилей.
-- Скачивание Vanilla Minecraft, библиотек, ресурсов и необходимой Java с серверов Mojang.
-- Локальный профиль с автосохранением ника и отдельные игровые папки для сборок.
-- PNG-скины 64×64 / 64×32, модели Steve / Alex и поворачиваемый предпросмотр.
-- Modrinth: поиск модов, ресурспаков и шейдеров, категории, сортировка и оригинальные иконки.
-- Установка совместимых файлов с проверкой размера и SHA-512, обязательными зависимостями, прогрессом и отменой.
-- Плавные переходы, реакции кнопок и режим уменьшения анимаций.
+- English by default, with a live English / Russian switch in Settings.
+- Download Vanilla Minecraft, libraries, assets and required Java from Mojang.
+- Discover existing Vanilla, Fabric, Forge, NeoForge and Quilt profiles.
+- Install Modrinth modpacks as independent, launchable library entries. The MRPACK installer provisions the exact declared Minecraft and loader versions.
+- Search and install Modrinth mods, resource packs and shaders, with categories, icons, SHA-512 verification, required mod dependencies and cancellation.
+- Open each instance folder from its library card or the folder icon beside the selected version. Settings also has direct instance, mods and Minecraft root folder buttons.
+- Offline nickname with autosave; local PNG skins (64×64 / 64×32) and named skin presets with classic / slim arms.
+- Close the Minecraft process launched by ORBIT using the main button. Requests normal shutdown first; forced termination requires a separate confirmation.
+- Configure game window resolution, fullscreen, minimize-on-launch, memory, Java, animation reduction, launcher window size persistence and log scrolling.
+- Hover feedback stays within card bounds; usable scrollbars and taskbar-aware maximization.
 
-## Сборка
+## Build
 
-Нужны **Windows 10/11 x64** и **.NET 8 SDK**. Для восстановления пакетов нужен интернет. Отдельная установка Visual Studio не обязательна.
-
-```powershell
-dotnet build .\OrbitLauncher.csproj -c Release
-```
-
-Сборка автономного EXE вместе с лицензиями:
+Windows 10/11 x64 and the .NET 8 SDK are required. Internet is needed to restore packages.
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scriptsuild.ps1 -Publish
+.\scripts\build.ps1 -Test -Publish
 ```
 
-Результат: `artifacts/publish/win-x64/OrbitLauncher.exe`. Скрипт не запускает Minecraft. Подробности: [сборка и проверки](docs/BUILDING.md).
+Published launcher: `artifacts/publish/win-x64/OrbitLauncher.exe`. The self-contained build includes .NET. Build scripts do not start Minecraft.
 
-## Использование
+To build the installer, install [Inno Setup 6.7.3 or newer](https://jrsoftware.org/isdl.php), then:
 
-1. Укажи папку Minecraft в настройках или выбери версию для скачивания.
-2. Введи ник — он сохраняется автоматически. Выбери установленную версию и нажми «Играть».
-3. В разделе «Моды» переключайся между модами, ресурспаками и шейдерами.
-4. После установки включи ресурспак или шейдер через настройки самой игры.
+```powershell
+.\scripts\build-installer.ps1 -Iscc 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
+```
 
-Настройки и локальные данные: `%LOCALAPPDATA%/OrbitLauncher`. По умолчанию у каждой сборки отдельная игровая папка; существующие миры и моды автоматически не переносятся. Эти папки доступны из лаунчера.
+Installer EXE and SHA-256: `artifacts/installer`. More: [building](docs/BUILDING.md), [architecture](docs/ARCHITECTURE.md), [validation](docs/VERIFICATION.md).
 
-## Ограничения
+## Storage and first launch
 
-- Полноценный вход Microsoft пока не реализован. Локальный профиль не даёт доступ к серверам, требующим официальной проверки аккаунта.
-- Установка новых Fabric/Forge/NeoForge/Quilt через лаунчер пока не реализована; используются уже установленные профили.
-- Для модов нужен соответствующий загрузчик. Для шейдеров нужен совместимый Iris или OptiFine: скачивание ZIP не устанавливает загрузчик.
-- Совместимость подбирается по метаданным Modrinth и не гарантирует отсутствие конфликтов с модами, добавленными вручную.
-- Локальный скин автоматически не становится видимым другим игрокам. Сторонние системы скинов могут конфликтовать.
-- Это предварительная версия. Перед открытием важных миров в другой версии Minecraft сделай резервную копию.
+A fresh profile uses `%APPDATA%\.minecraft`. ORBIT creates this folder if it does not exist; Minecraft versions, libraries, assets and runtime are downloaded when a version is installed. Choose an existing game folder in Settings to use existing profiles. Existing user settings are preserved when upgrading.
 
-## Авторство
+Standard isolated instances: `%LOCALAPPDATA%\OrbitLauncher\instances\<id>`.
 
-- **Автор и владелец проекта:** [siho2223](https://github.com/siho2223).
-- **Помощь в разработке, тестировании и документации:** OpenAI Codex.
+Modrinth packs: `%LOCALAPPDATA%\OrbitLauncher\modpacks\<id>`. These remain independent even when standard instance isolation is disabled. Mods, resource packs, shaders and worlds go into `mods`, `resourcepacks`, `shaderpacks` and `saves` within the selected game folder.
 
-ORBIT создан по идеям и под руководством автора с использованием ИИ-инструментов. Это не официальный проект OpenAI.
+Skin presets: `%LOCALAPPDATA%\OrbitLauncher\skin-presets`.
 
-## Исходники и лицензии
+## Current limits
 
-Код ORBIT распространяется по **GPL-3.0-only**: [LICENSE](LICENSE). У сторонних компонентов собственные лицензии: [NOTICE](NOTICE.md) и [ThirdParty](ThirdParty).
+Preview software. Microsoft account sign-in is not implemented. Profiles are local; online-mode servers require official account authentication. A local skin is not automatically visible to other players.
 
-В исходники включён неизменённый authlib-injector 1.2.8 вместе с его точным исходным архивом и лицензией. Minecraft, Java, моды, ресурспаки, шейдеры, пользовательские скины и игровые сохранения не включены.
+A shader ZIP does not install Iris or OptiFine. Installing individual mods requires a compatible existing loader profile. MRPACK modpacks provision their own declared Fabric, Quilt, Forge or NeoForge loader. The current pack catalog installs the latest published release; optional client files are included, server-only files are skipped. Unsupported dependencies or download hosts stop installation with an error instead of publishing an incomplete pack. Old Java 8 Forge installers may not support unattended installation.
 
-ORBIT не связан с Mojang, Microsoft или Modrinth. Названия продуктов и изображения проектов принадлежат их владельцам.
+The installer is unsigned. A Windows unknown-publisher warning is possible. No telemetry or updater is included. Uninstalling the application preserves game files and user data.
 
-[Архитектура](docs/ARCHITECTURE.md) · [Участие в разработке](CONTRIBUTING.md) · [История изменений](CHANGELOG.md)
+## Русский
 
-[Как загрузить этот проект на GitHub](docs/PUBLISHING.md) · [Проверка подготовленных исходников](docs/VERIFICATION.md)
+Русский язык включается в **Settings → Interface language → Русский**. Скачивание сборок Modrinth находится во вкладке **Моды → Сборки**. Папка у карточки версии открывает игровую папку сборки. Скины можно сохранять как именованные шаблоны и переключать вместе с моделью рук.
+
+## Authors and license
+
+- Project author and owner: [siho2223](https://github.com/siho2223) / Telegram [@farzix0](https://t.me/farzix0).
+- Development, testing and documentation assistance: OpenAI Codex. This is not an official OpenAI project.
+
+ORBIT source: **GPL-3.0-only**, see [LICENSE](LICENSE). Dependencies retain their licenses; see [NOTICE.md](NOTICE.md) and `ThirdParty`. Unmodified authlib-injector 1.2.8 and its exact source archive are included with its AGPLv3+ license and bundling exception. SkiaSharp and .NET/WPF notices are included.
+
+No Minecraft, modpack or other game assets, Java runtime, credentials or user settings are included in this source repository. The OR icon was generated with AI at the author's request. ORBIT is not affiliated with Mojang or Microsoft.

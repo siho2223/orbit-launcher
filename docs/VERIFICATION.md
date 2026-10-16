@@ -1,15 +1,23 @@
-# Проверка подготовленных исходников
+# 0.7.0 validation
 
-Проверена версия 0.6.1 при подготовке публичного дерева исходников.
+- Release build: no compiler errors or warnings.
+- Basic core suite: 14 checks.
+- Installed-profile launch-plan / argument / Java probe regression: 52 checks. Java metadata probes ran; Minecraft did not run.
+- Upgrade tests: 35 checks covering language/settings persistence, MRPACK path and URL validation, loader/env parsing, client override precedence, archive traversal, preset isolation, rollback on archive hash mismatch, clean-machine scan.
+- Live MRPACK: Simply Optimized Reloaded for Minecraft 26.1.2 with NeoForge installed in a private workspace test root. Pack, Minecraft, Java, mod files and loader completed; launch plan and asset checks found no missing files. 39 checks in that live test run.
+- Fabric 0.20.0 and Quilt 0.20.0-beta.9 loader profiles for Minecraft 1.21.1 provisioned from official metadata with verified libraries.
+- Offscreen WPF: 10 checks for reactive EN/RU labels, complete static English labels, vector folder icons, hover scale, minimum scrollbar thumb, taskbar work area, live modpack results/categories/install availability.
+- Resource pack and shader installation regression: live search, installation and repeated-install checks passed.
+- Installer installation/uninstallation and payload hashes are checked separately before distributing a release.
 
-- Приложение собрано из отдельной копии подготовленного репозитория через scripts/build.ps1.
-- Создана автономная Windows x64 сборка; компилятор сообщил 0 ошибок и 0 предупреждений.
-- Пройдены 14 базовых консольных проверок без установленного Minecraft в качестве входных данных.
-- Готовый EXE отрисовал главную страницу для документации. Ник на скриншоте заменён на Player только в режиме предпросмотра; настройки пользователя не изменялись.
-- Проверен SHA-256 неизменённого authlib-injector.
-- Проверено, что .gitignore сохраняет логотип и необходимые лицензированные зависимости, исключая сборки, настройки и ключи.
-- Исходное дерево проверено на личные абсолютные пути, встроенные значения ключей и маркеры закрытых ключей.
+Minecraft was not launched. Actual gameplay, unsaved-world shutdown behavior and mixed-DPI multi-monitor interaction still require user testing. Loader installation does not guarantee compatibility of arbitrary third-party modpacks or individual mods. Forge-specific live installer verification was not performed in this session; NeoForge, Fabric and Quilt were checked as listed above.
 
-В архив не входят рабочие журналы, пользовательские настройки, скины, сохранения, Minecraft, Java, скачанные моды/ресурспаки/шейдеры и результаты сборки. Исключения: заранее лицензированный authlib-injector JAR и архив его точных исходников в ThirdParty.
+Commands:
 
-Эта проверка состава и сборки не является независимым аудитом безопасности и не заменяет тестирование игры на целевых устройствах. Minecraft при подготовке публикации не запускался. Репозиторий автоматически никуда не публиковался.
+```powershell
+dotnet run --project Tests -c Release
+dotnet run --project Tests -c Release -- --upgrade artifacts/upgrade-tests
+dotnet run --project Tests -c Release -- --upgrade artifacts/upgrade-live --live
+```
+
+Live tests download pack/game/Java files into their explicit test destination and do not start the game. No test output is shipped with the source.

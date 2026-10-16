@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
@@ -24,7 +24,7 @@ public static class LaunchEngine {
   foreach(string folder in roots.Where(Directory.Exists))try{foreach(string release in Directory.EnumerateFiles(folder,"release",SearchOption.AllDirectories)){var java=ReadJava(Path.Combine(Path.GetDirectoryName(release)!,"bin","java.exe"));if(java?.Major==major)return java;}}catch(UnauthorizedAccessException){}
   return null;
  }
- public static string InstanceDirectory(LauncherSettings settings,string id)=>settings.Isolated?Path.Combine(LauncherSettings.DataRoot,"instances",Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Path.GetFullPath(settings.GameRoot)+"|"+id)))[..16]):Path.GetFullPath(settings.GameRoot);
+ public static string InstanceDirectory(LauncherSettings settings,string id)=>File.Exists(Path.Combine(settings.GameRoot,".orbit-pack.json"))?Path.GetFullPath(settings.GameRoot):settings.Isolated?Path.Combine(LauncherSettings.DataRoot,"instances",Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Path.GetFullPath(settings.GameRoot)+"|"+id)))[..16]):Path.GetFullPath(settings.GameRoot);
  public static LaunchPlan Build(LauncherSettings s,string id){
   if(!Regex.IsMatch(s.Nickname,"^[A-Za-z0-9_]{3,16}$"))throw new InvalidDataException("Ник: 3–16 латинских букв, цифр или подчёркиваний.");
   string root=Path.GetFullPath(s.GameRoot);var v=Versions.Resolve(root,id);var java=FindJava(root,v.JavaMajor,s.JavaPath);string game=InstanceDirectory(s,id);
@@ -39,11 +39,11 @@ public static class LaunchEngine {
    if(lib["natives"]?["windows"] is {} nativeName){string classifier=nativeName.ToString().Replace("${arch}","64");string relative=lib["downloads"]?["classifiers"]?[classifier]?["path"]?.ToString()??MavenPath(name+":"+classifier);AddFile(Versions.Within(libroot,relative),true);}
   }
   if(v.Jar!="")classpath.Add(v.Jar);string assets=Path.Combine(root,"assets");if(v.Assets!=""&&!File.Exists(Versions.Within(assets,"indexes/"+v.Assets+".json")))plan.Missing.Add("Индекс ресурсов: "+v.Assets);
-  var values=new Dictionary<string,string>{{"auth_player_name",s.Nickname},{"version_name",id},{"game_directory",game},{"assets_root",assets},{"assets_index_name",v.Assets},{"auth_uuid",OfflineUuid(s.Nickname)},{"auth_access_token","0"},{"auth_session","0"},{"user_type","legacy"},{"version_type",v.Type},{"user_properties","{}"},{"clientid",""},{"auth_xuid",""},{"natives_directory",plan.Natives},{"launcher_name","Orbit"},{"launcher_version","0.3.0"},{"classpath",string.Join(Path.PathSeparator,classpath)},{"classpath_separator",Path.PathSeparator.ToString()},{"library_directory",libroot},{"resolution_width","1280"},{"resolution_height","720"},{"game_assets",Path.Combine(assets,"virtual",v.Assets)}};
+  var values=new Dictionary<string,string>{{"auth_player_name",s.Nickname},{"version_name",id},{"game_directory",game},{"assets_root",assets},{"assets_index_name",v.Assets},{"auth_uuid",OfflineUuid(s.Nickname)},{"auth_access_token","0"},{"auth_session","0"},{"user_type","legacy"},{"version_type",v.Type},{"user_properties","{}"},{"clientid",""},{"auth_xuid",""},{"natives_directory",plan.Natives},{"launcher_name","Orbit"},{"launcher_version","0.3.0"},{"classpath",string.Join(Path.PathSeparator,classpath)},{"classpath_separator",Path.PathSeparator.ToString()},{"library_directory",libroot},{"resolution_width",s.GameWidth.ToString()},{"resolution_height",s.GameHeight.ToString()},{"game_assets",Path.Combine(assets,"virtual",v.Assets)}};
   string Expand(string input)=>Regex.Replace(input,@"\$\{([^}]+)\}",m=>values.TryGetValue(m.Groups[1].Value,out string? val)?val:throw new InvalidDataException("Неизвестный параметр версии: "+m.Value));
   plan.Arguments.Add("-Xms512M");plan.Arguments.Add("-Xmx"+Math.Clamp(s.MemoryMb,1024,32768)+"M");
   if(v.JvmArgs.Count>0)plan.Arguments.AddRange(ArgumentValues(v.JvmArgs).Select(Expand));else plan.Arguments.AddRange(new[]{"-Djava.library.path="+plan.Natives,"-Dminecraft.launcher.brand=Orbit","-cp",values["classpath"]});
-  plan.Arguments.Add(v.MainClass);plan.Arguments.AddRange(ArgumentValues(v.GameArgs).Select(Expand));return plan;
+  plan.Arguments.Add(v.MainClass);plan.Arguments.AddRange(ArgumentValues(v.GameArgs).Select(Expand));if(s.Fullscreen&&!plan.Arguments.Contains("--fullscreen"))plan.Arguments.Add("--fullscreen");return plan;
  }
  public static List<string> CheckAssets(LauncherSettings s,LaunchPlan plan){var missing=new List<string>();if(plan.Version.Assets=="")return missing;string assets=Path.Combine(s.GameRoot,"assets");string index=Versions.Within(assets,"indexes/"+plan.Version.Assets+".json");if(!File.Exists(index))return missing;var objects=JsonNode.Parse(File.ReadAllText(index))?["objects"]?.AsObject();if(objects==null)return missing;foreach(var item in objects){string hash=item.Value?["hash"]?.ToString()??"";if(!Regex.IsMatch(hash,"^[a-f0-9]{40}$"))throw new InvalidDataException("Неверный хеш ресурса.");if(!File.Exists(Versions.Within(assets,"objects/"+hash[..2]+"/"+hash)))missing.Add(item.Key);}return missing;}
  public static void ExtractNatives(LaunchPlan plan){Directory.CreateDirectory(plan.Natives);foreach(string file in plan.NativeArchives){using var zip=ZipFile.OpenRead(file);foreach(var entry in zip.Entries){if(entry.Name==""||entry.FullName.StartsWith("META-INF/",StringComparison.OrdinalIgnoreCase))continue;if(!entry.Name.EndsWith(".dll",StringComparison.OrdinalIgnoreCase))continue;string target=Versions.Within(plan.Natives,entry.FullName);Directory.CreateDirectory(Path.GetDirectoryName(target)!);entry.ExtractToFile(target,true);}}}

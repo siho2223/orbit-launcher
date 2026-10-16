@@ -1,3 +1,14 @@
+# 0.7.0
+
+- Default English UI with live Russian switching.
+- MRPACK installation and separate profiles, automatic loader provisioning.
+- Library and selected-version folder icons; direct mods and root-folder buttons.
+- Named local skin presets with arm model retention.
+- Main action closes the game launched by ORBIT, with save/force-quit confirmations.
+- Resolution, fullscreen, minimize-on-launch, remember-window and log-scrolling settings.
+- Hover clipping, small scrollbar thumbs, initial window bounds and maximized taskbar overlap fixed.
+- New installer and reproducible installer source; English default and Russian option.
+
 # Changelog
 
 ## 0.6.1

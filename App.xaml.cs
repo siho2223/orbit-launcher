@@ -1,10 +1,10 @@
-using System.IO;using System.Windows;using System.Windows.Media;using System.Windows.Media.Imaging;
+﻿using System.IO;using System.Windows;using System.Windows.Media;using System.Windows.Media.Imaging;
 namespace OrbitLauncher;
 public partial class App:Application {
- void ButtonEnter(object sender,System.Windows.Input.MouseEventArgs e)=>AnimateButton(sender,1.012,.75);
+ void ButtonEnter(object sender,System.Windows.Input.MouseEventArgs e)=>AnimateButton(sender,1,.75);
  void ButtonLeave(object sender,System.Windows.Input.MouseEventArgs e)=>AnimateButton(sender,1,0);
- void ButtonPressed(object sender,System.Windows.Input.MouseButtonEventArgs e)=>AnimateButton(sender,.974,1);
- void ButtonReleased(object sender,System.Windows.Input.MouseButtonEventArgs e)=>AnimateButton(sender,1.012,.75);
+ void ButtonPressed(object sender,System.Windows.Input.MouseButtonEventArgs e)=>AnimateButton(sender,1,1);
+ void ButtonReleased(object sender,System.Windows.Input.MouseButtonEventArgs e)=>AnimateButton(sender,1,.75);
  void AnimateButton(object sender,double scale,double hover){if(sender is not System.Windows.Controls.Button button||!button.IsEnabled)return;bool reduced=Resources["ReduceMotion"] is true;
   if(button.RenderTransform is not ScaleTransform){button.RenderTransform=new ScaleTransform(1,1);button.RenderTransformOrigin=new Point(.5,.5);}var transform=(ScaleTransform)button.RenderTransform;
   if(reduced){transform.BeginAnimation(ScaleTransform.ScaleXProperty,null);transform.BeginAnimation(ScaleTransform.ScaleYProperty,null);transform.ScaleX=transform.ScaleY=1;if(button.Template.FindName("HoverStroke",button) is FrameworkElement staticStroke){staticStroke.BeginAnimation(UIElement.OpacityProperty,null);staticStroke.Opacity=hover;}return;}
