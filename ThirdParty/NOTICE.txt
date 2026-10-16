@@ -1,0 +1,4 @@
+Unmodified authlib-injector 1.2.8, Copyright its contributors.
+https://github.com/yushijinhun/authlib-injector/tree/v1.2.8
+SHA256 9c7f4343e6c82034958ffb48c14a2cb0c85928be7283103ce17da00c6d5a7b10
+AGPLv3 with authlib-injector exception; licenses and exact source archive included. ORBIT uses this library only for local skin texture profiles. It does not provide online account authentication.

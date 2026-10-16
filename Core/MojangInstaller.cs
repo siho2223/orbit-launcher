@@ -1,0 +1,73 @@
+using System.Diagnostics;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Security.Cryptography;
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+namespace Orbit.Core;
+
+public sealed record RemoteVersion(string Id,string Type,string Url,string Sha1,DateTimeOffset Released);
+public sealed record InstallProgress(string Stage,long Done,long Total,double BytesPerSecond,int Files,int TotalFiles) {
+ public double Percent=>Total>0?Math.Clamp(100d*Done/Total,0,100):0;
+ public TimeSpan? Remaining=>BytesPerSecond>1024?TimeSpan.FromSeconds(Math.Max(0,Total-Done)/BytesPerSecond):null;
+}
+public sealed record DownloadFile(string Path,string Url,string Sha1,long Size);
+public sealed class MojangInstaller:IDisposable {
+ public const string ManifestUrl="https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
+ public const string JavaManifestUrl="https://piston-meta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
+ readonly HttpClient http;readonly string cache;
+ public MojangInstaller(string? cacheDirectory=null){cache=cacheDirectory??Path.Combine(LauncherSettings.DataRoot,"catalog");http=new HttpClient(new HttpClientHandler{AllowAutoRedirect=false,AutomaticDecompression=DecompressionMethods.All}){Timeout=Timeout.InfiniteTimeSpan};http.DefaultRequestHeaders.UserAgent.ParseAdd("ORBIT/0.2");}
+ public void Dispose()=>http.Dispose();
+ public static Uri OfficialUri(string url){if(!Uri.TryCreate(url,UriKind.Absolute,out var uri)||uri.Scheme!="https"||!uri.IsDefaultPort||uri.UserInfo!="")throw new InvalidDataException("Неверный адрес загрузки.");string h=uri.Host.ToLowerInvariant();if(h is not ("piston-meta.mojang.com" or "launchermeta.mojang.com" or "piston-data.mojang.com" or "launcher.mojang.com" or "libraries.minecraft.net" or "resources.download.minecraft.net"))throw new InvalidDataException("Загрузка разрешена только с серверов Mojang: "+h);return uri;}
+ async Task<byte[]> Metadata(string url,string? hash,CancellationToken ct){using var timeout=CancellationTokenSource.CreateLinkedTokenSource(ct);timeout.CancelAfter(TimeSpan.FromSeconds(45));using var response=await http.GetAsync(OfficialUri(url),HttpCompletionOption.ResponseHeadersRead,timeout.Token).ConfigureAwait(false);response.EnsureSuccessStatusCode();using var stream=await response.Content.ReadAsStreamAsync(timeout.Token).ConfigureAwait(false);using var data=new MemoryStream();byte[] buf=new byte[65536];int n;while((n=await stream.ReadAsync(buf,timeout.Token).ConfigureAwait(false))>0){if(data.Length+n>32*1024*1024)throw new InvalidDataException("Описание загрузки слишком большое.");data.Write(buf,0,n);}var bytes=data.ToArray();if(hash is not null&&!HashMatches(bytes,hash))throw new InvalidDataException("Хеш описания не совпал с Mojang.");return bytes;}
+ static bool HashMatches(byte[] bytes,string hash)=>Convert.ToHexString(SHA1.HashData(bytes)).Equals(hash,StringComparison.OrdinalIgnoreCase);
+ public async Task<IReadOnlyList<RemoteVersion>> CatalogAsync(CancellationToken ct=default){Directory.CreateDirectory(cache);string path=Path.Combine(cache,"versions.json");byte[] data;try{data=await Metadata(ManifestUrl,null,ct).ConfigureAwait(false);_ = ParseCatalog(data);await File.WriteAllBytesAsync(path+".tmp",data,ct).ConfigureAwait(false);File.Move(path+".tmp",path,true);}catch(Exception e)when(e is not OperationCanceledException&&File.Exists(path)){data=await File.ReadAllBytesAsync(path,ct).ConfigureAwait(false);}return ParseCatalog(data);}
+ public static IReadOnlyList<RemoteVersion> ParseCatalog(byte[] bytes){var root=JsonNode.Parse(bytes);return root?["versions"]?.AsArray().Select(n=>{string id=n!["id"]!.ToString();ValidateId(id);string url=n["url"]!.ToString();OfficialUri(url);string hash=ValidHash(n["sha1"]!.ToString());return new RemoteVersion(id,n["type"]!.ToString(),url,hash,DateTimeOffset.Parse(n["releaseTime"]!.ToString()));}).ToArray()??throw new InvalidDataException("Пустой каталог Mojang.");}
+ public static void ValidateId(string id){if(string.IsNullOrWhiteSpace(id)||id.Length>160||id.IndexOfAny(Path.GetInvalidFileNameChars())>=0||id.Contains('/')||id.Contains('\\')||id is "." or "..")throw new InvalidDataException("Некорректный ID версии.");}
+ static string ValidHash(string hash){if(!Regex.IsMatch(hash,"^[a-fA-F0-9]{40}$"))throw new InvalidDataException("Некорректный SHA-1.");return hash;}
+ static DownloadFile Job(string root,string path,JsonNode info){string url=info["url"]!.ToString();OfficialUri(url);long size=info["size"]!.GetValue<long>();if(size<0)throw new InvalidDataException("Неверный размер файла.");return new(Versions.Within(root,path),url,ValidHash(info["sha1"]!.ToString()),size);}
+ public async Task InstallAsync(string root,RemoteVersion version,IProgress<InstallProgress>? progress=null,CancellationToken ct=default){
+  root=Path.GetFullPath(root);ValidateId(version.Id);Directory.CreateDirectory(root);
+  using var lockFile=new FileStream(Versions.Within(root,".orbit-download.lock"),FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.None);
+  void Stage(string s)=>progress?.Report(new(s,0,0,0,0,0));Stage("Получение описания "+version.Id);
+  byte[] metadata=await Metadata(version.Url,version.Sha1,ct).ConfigureAwait(false);var v=JsonNode.Parse(metadata)!.AsObject();if(v["id"]?.ToString()!=version.Id)throw new InvalidDataException("ID версии не совпал с каталогом.");
+  string versionDir=Versions.Within(root,"versions/"+version.Id);string versionJson=Path.Combine(versionDir,version.Id+".json");
+  // Do not overwrite an installed/custom profile, even if its ID equals a Mojang version.
+  if(File.Exists(versionJson)&&!HashMatches(await File.ReadAllBytesAsync(versionJson,ct).ConfigureAwait(false),version.Sha1))throw new IOException("Версия с таким ID уже существует и отличается от Mojang. Выбери другую папку игры.");
+  var jobs=new List<DownloadFile>();jobs.Add(Job(root,"versions/"+version.Id+"/"+version.Id+".jar",v["downloads"]?["client"]??throw new InvalidDataException("У версии нет клиента.")));
+  if(v["libraries"] is JsonArray libs)foreach(var lib in libs){if(lib==null||!LaunchEngine.Allowed(lib["rules"]))continue;string name=lib["name"]!.ToString();if(name.Contains(":natives-")&&(name.Contains("macos")||name.Contains("linux")||name.Contains("arm64")||name.Contains("windows-x86")))continue;
+   if(lib["downloads"]?["artifact"] is {} artifact)jobs.Add(Job(root,"libraries/"+(artifact["path"]?.ToString()??LaunchEngine.MavenPath(name)),artifact));
+   if(lib["natives"]?["windows"] is {} native){string classifier=native.ToString().Replace("${arch}","64");if(lib["downloads"]?["classifiers"]?[classifier] is {} n)jobs.Add(Job(root,"libraries/"+n["path"]!.ToString(),n));}
+  }
+  JsonObject? assetObjects=null;bool virtualAssets=false,mappedAssets=false;string assetId="";
+  if(v["assetIndex"] is {} index){Stage("Получение списка ресурсов");assetId=index["id"]!.ToString();ValidateId(assetId);byte[] indexData=await Metadata(index["url"]!.ToString(),index["sha1"]!.ToString(),ct).ConfigureAwait(false);var parsed=JsonNode.Parse(indexData)!;assetObjects=parsed["objects"]!.AsObject();virtualAssets=parsed["virtual"]?.GetValue<bool>()??false;mappedAssets=parsed["map_to_resources"]?.GetValue<bool>()??false;
+   string indexPath=Versions.Within(root,"assets/indexes/"+assetId+".json");Directory.CreateDirectory(Path.GetDirectoryName(indexPath)!);await File.WriteAllBytesAsync(indexPath+".part",indexData,ct).ConfigureAwait(false);File.Move(indexPath+".part",indexPath,true);
+   foreach(var pair in assetObjects){string hash=ValidHash(pair.Value!["hash"]!.ToString());jobs.Add(new(Versions.Within(root,"assets/objects/"+hash[..2]+"/"+hash),"https://resources.download.minecraft.net/"+hash[..2]+"/"+hash,hash,pair.Value["size"]!.GetValue<long>()));}
+  }
+  if(v["logging"]?["client"]?["file"] is {} log)jobs.Add(Job(root,"assets/log_configs/"+log["id"]!.ToString(),log));
+  int major=v["javaVersion"]?["majorVersion"] is {} jm?(int)jm.GetValue<double>():8;string component=v["javaVersion"]?["component"]?.ToString()??"jre-legacy";
+  string runtimeMarker=Versions.Within(root,"runtime/"+component+"/.orbit-installing");bool installingJava=File.Exists(runtimeMarker)||LaunchEngine.FindJava(root,major)==null;
+  if(installingJava){Directory.CreateDirectory(Path.GetDirectoryName(runtimeMarker)!);await File.WriteAllTextAsync(runtimeMarker,"ORBIT runtime installation in progress",ct).ConfigureAwait(false);Stage("Подготовка Java "+major);ValidateId(component);var all=JsonNode.Parse(await Metadata(JavaManifestUrl,null,ct).ConfigureAwait(false));var runtime=all?["windows-x64"]?[component]?.AsArray().FirstOrDefault()??throw new InvalidDataException($"Mojang не предоставляет {component} для Windows x64. Установи Java {major} вручную.");var manifest=runtime["manifest"]!;var files=JsonNode.Parse(await Metadata(manifest["url"]!.ToString(),manifest["sha1"]!.ToString(),ct).ConfigureAwait(false))!["files"]!.AsObject();
+   foreach(var f in files){string type=f.Value!["type"]!.ToString();if(type=="directory")continue;if(type!="file")throw new InvalidDataException("Неподдерживаемый тип файла Java: "+type);jobs.Add(Job(root,"runtime/"+component+"/windows-x64/"+component+"/"+f.Key,f.Value["downloads"]!["raw"]!));}
+  }
+  Stage("Проверка уже скачанных файлов");var pending=new List<DownloadFile>();int scanned=0;foreach(var job in jobs.DistinctBy(j=>j.Path)){ct.ThrowIfCancellationRequested();if(!await IsValidAsync(job,ct).ConfigureAwait(false))pending.Add(job);if(++scanned%200==0)Stage($"Проверка файлов · {scanned}/{jobs.Count}");}
+  var meter=new Meter(progress,pending.Sum(j=>j.Size),pending.Count);meter.Report(true);
+  await Parallel.ForEachAsync(pending,new ParallelOptions{MaxDegreeOfParallelism=12,CancellationToken=ct},async(job,token)=>{await DownloadAsync(job,meter.Add,token,meter.Traffic).ConfigureAwait(false);meter.Finish();}).ConfigureAwait(false);
+  Stage("Завершение установки");
+  if(assetObjects!=null&&(virtualAssets||mappedAssets))foreach(var pair in assetObjects){ct.ThrowIfCancellationRequested();string hash=pair.Value!["hash"]!.ToString();string source=Versions.Within(root,"assets/objects/"+hash[..2]+"/"+hash);if(virtualAssets){string dest=Versions.Within(root,"assets/virtual/"+assetId+"/"+pair.Key);Directory.CreateDirectory(Path.GetDirectoryName(dest)!);File.Copy(source,dest,true);}if(mappedAssets){string dest=Versions.Within(root,"resources/"+pair.Key);Directory.CreateDirectory(Path.GetDirectoryName(dest)!);File.Copy(source,dest,true);}}
+  ct.ThrowIfCancellationRequested();if(installingJava){if(LaunchEngine.FindJava(root,major)==null)throw new IOException("Не удалось проверить установленную Java.");File.Delete(runtimeMarker);}Directory.CreateDirectory(versionDir);await File.WriteAllBytesAsync(versionJson+".part",metadata,ct).ConfigureAwait(false);File.Move(versionJson+".part",versionJson,true);progress?.Report(new("Готово · "+version.Id,meter.Total,meter.Total,0,pending.Count,pending.Count));
+ }
+ public static async Task<bool> IsValidAsync(DownloadFile job,CancellationToken ct=default){if(!File.Exists(job.Path)||new FileInfo(job.Path).Length!=job.Size)return false;using var stream=File.OpenRead(job.Path);return Convert.ToHexString(await SHA1.HashDataAsync(stream,ct).ConfigureAwait(false)).Equals(job.Sha1,StringComparison.OrdinalIgnoreCase);}
+ public async Task DownloadAsync(DownloadFile job,Action<long>? advance=null,CancellationToken ct=default,Action<long>? networkBytes=null){OfficialUri(job.Url);ValidHash(job.Sha1);Directory.CreateDirectory(Path.GetDirectoryName(job.Path)!);string part=job.Path+".orbit-part";
+  for(int attempt=0;attempt<3;attempt++){long counted=0;try{ct.ThrowIfCancellationRequested();long offset=File.Exists(part)?new FileInfo(part).Length:0;if(offset>job.Size){File.Delete(part);offset=0;}if(offset==job.Size&&File.Exists(part)){var cached=job with{Path=part};if(await IsValidAsync(cached,ct).ConfigureAwait(false)){File.Move(part,job.Path,true);advance?.Invoke(job.Size);return;}File.Delete(part);offset=0;}
+   using var timeout=CancellationTokenSource.CreateLinkedTokenSource(ct);timeout.CancelAfter(TimeSpan.FromMinutes(10));using var request=new HttpRequestMessage(HttpMethod.Get,OfficialUri(job.Url));if(offset>0)request.Headers.Range=new RangeHeaderValue(offset,null);using var response=await http.SendAsync(request,HttpCompletionOption.ResponseHeadersRead,timeout.Token).ConfigureAwait(false);response.EnsureSuccessStatusCode();if(response.StatusCode==HttpStatusCode.PartialContent){if(response.Content.Headers.ContentRange?.From!=offset)throw new IOException("Сервер вернул неверный диапазон.");}else offset=0;
+   if(offset>0){advance?.Invoke(offset);counted+=offset;}using(var output=new FileStream(part,offset>0?FileMode.Append:FileMode.Create,FileAccess.Write,FileShare.None,131072,true)){using var input=await response.Content.ReadAsStreamAsync(timeout.Token).ConfigureAwait(false);byte[] buf=new byte[131072];int n;long written=offset;while((n=await input.ReadAsync(buf,timeout.Token).ConfigureAwait(false))>0){written+=n;if(written>job.Size)throw new InvalidDataException("Сервер вернул больше данных, чем ожидалось.");await output.WriteAsync(buf.AsMemory(0,n),timeout.Token).ConfigureAwait(false);advance?.Invoke(n);networkBytes?.Invoke(n);counted+=n;}}
+   if(!await IsValidAsync(job with{Path=part},ct).ConfigureAwait(false)){File.Delete(part);throw new InvalidDataException("Размер или SHA-1 не совпал: "+Path.GetFileName(job.Path));}File.Move(part,job.Path,true);return;
+  }catch(Exception e)when(e is not OperationCanceledException||!ct.IsCancellationRequested){advance?.Invoke(-counted);if(attempt==2)throw new IOException("Не удалось скачать "+Path.GetFileName(job.Path)+": "+e.Message,e);await Task.Delay(500*(attempt+1),ct).ConfigureAwait(false);}}
+ }
+ sealed class Meter{readonly IProgress<InstallProgress>? progress;readonly Stopwatch clock=Stopwatch.StartNew();readonly object sync=new();long done,traffic,last;int files;public long Total{get;}readonly int count;
+  public Meter(IProgress<InstallProgress>? p,long total,int n){progress=p;Total=total;count=n;}
+  public void Add(long bytes){Interlocked.Add(ref done,bytes);Report();}public void Traffic(long bytes){Interlocked.Add(ref traffic,bytes);}public void Finish(){Interlocked.Increment(ref files);Report();}
+  public void Report(bool force=false){lock(sync){if(!force&&clock.ElapsedMilliseconds-last<150)return;last=clock.ElapsedMilliseconds;progress?.Report(new("Скачивание файлов",Math.Clamp(Interlocked.Read(ref done),0,Total),Total,Interlocked.Read(ref traffic)/Math.Max(.1,clock.Elapsed.TotalSeconds),files,count));}}
+ }
+}

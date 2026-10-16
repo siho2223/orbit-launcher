@@ -1,0 +1,47 @@
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using Orbit.Core;
+namespace OrbitLauncher;
+public partial class MainWindow {
+ readonly ModrinthClient modrinth=new();
+ CancellationTokenSource? modsSearchCts,modInstallCts;
+ readonly DispatcherTimer modsDebounce=new(){Interval=TimeSpan.FromMilliseconds(450)};
+ Task modsLoadTask=Task.CompletedTask;
+ bool modsReady,modsUpdating,modBusy;
+ string catalogType="mod";readonly Dictionary<string,IReadOnlyList<ModCategory>> categoryCache=new();
+ int modsOffset,modsTotal,modsGeneration;
+ public static readonly DependencyProperty ModCanInstallProperty=DependencyProperty.Register(nameof(ModCanInstall),typeof(bool),typeof(MainWindow),new PropertyMetadata(false));
+ public bool ModCanInstall {get=>(bool)GetValue(ModCanInstallProperty);set=>SetValue(ModCanInstallProperty,value);}
+ static string ModGameVersion(VersionEntry v){if(Regex.IsMatch(v.BaseVersion,@"^\d+\.\d+(\.\d+)?$|^\d\dw\d\d[a-z]$"))return v.BaseVersion;var match=Regex.Match(v.BaseVersion,@"(?<!\d)\d+\.\d+(?:\.\d+)?");return match.Success?match.Value:v.BaseVersion;}
+ void RefreshModInstallState(){ModCanInstall=!modBusy&&!installing&&!launching&&SelectedChoice is {Installed:true} v&&(catalogType!="mod"||v.Loader is "Fabric" or "Forge" or "NeoForge" or "Quilt");if(ModsTypeButton!=null){ModsTypeButton.IsEnabled=PacksTypeButton.IsEnabled=ShadersTypeButton.IsEnabled=!modBusy;ModsTypeButton.Background=new System.Windows.Media.SolidColorBrush(catalogType=="mod"?System.Windows.Media.Color.FromRgb(23,62,55):System.Windows.Media.Color.FromRgb(28,45,59));PacksTypeButton.Background=new System.Windows.Media.SolidColorBrush(catalogType=="resourcepack"?System.Windows.Media.Color.FromRgb(23,62,55):System.Windows.Media.Color.FromRgb(28,45,59));ShadersTypeButton.Background=new System.Windows.Media.SolidColorBrush(catalogType=="shader"?System.Windows.Media.Color.FromRgb(23,62,55):System.Windows.Media.Color.FromRgb(28,45,59));}}
+ async Task LoadContentCategoriesAsync(){string type=catalogType;if(!categoryCache.TryGetValue(type,out var categories)){categories=await modrinth.CategoriesAsync(catalogCts.Token,type);categoryCache[type]=categories;}if(type!=catalogType)return;modsUpdating=true;try{ModsCategory.ItemsSource=new[]{new ModCategory("","Все категории")}.Concat(categories);ModsCategory.SelectedIndex=0;}finally{modsUpdating=false;}}
+ async void CatalogType_Click(object sender,RoutedEventArgs e){if(modBusy||((Button)sender).Tag is not string type||type==catalogType)return;catalogType=type;modsSearchCts?.Cancel();modsDebounce.Stop();modsUpdating=true;ModsQuery.Text="";ModsResults.ItemsSource=null;modsUpdating=false;modsLoadTask=LoadModsPageAsync();await modsLoadTask;}
+ Task OpenModsAsync(){modsLoadTask=LoadModsPageAsync();return modsLoadTask;}
+ async Task LoadModsPageAsync(){
+  try{
+   if(!modsReady){modsReady=true;modsUpdating=true;ModsCategory.ItemsSource=new[]{new ModCategory("","Все категории")};ModsCategory.SelectedIndex=0;ModsSort.ItemsSource=new[]{new ModCategory("relevance","По релевантности"),new ModCategory("downloads","Популярные"),new ModCategory("updated","Обновлённые"),new ModCategory("newest","Новые")};ModsSort.SelectedIndex=1;modsUpdating=false;modsDebounce.Tick+=async(s,e)=>{modsDebounce.Stop();modsLoadTask=SearchModsAsync(true);await modsLoadTask;};
+   }
+   await LoadContentCategoriesAsync();
+   await SearchModsAsync(true);
+  }catch(OperationCanceledException){}catch(Exception e){ModsStatus.Text=e.Message;}
+ }
+ async Task SearchModsAsync(bool reset){if(modsUpdating||SelectedChoice is not {} v)return;modsDebounce.Stop();modsSearchCts?.Cancel();var cts=CancellationTokenSource.CreateLinkedTokenSource(catalogCts.Token);modsSearchCts=cts;int stamp=++modsGeneration;try{if(reset)modsOffset=0;RefreshModInstallState();string type=catalogType;bool pack=type=="resourcepack",shader=type=="shader";ModsQueryHint.Text=shader?"Поиск шейдеров на Modrinth…":pack?"Поиск ресурспаков на Modrinth…":"Поиск модов на Modrinth…";string gameVersion=ModGameVersion(v);string? loader=type!="mod"||v.Loader=="Vanilla"?null:v.Loader.ToLowerInvariant();ModsTarget.Text=gameVersion+" · "+(shader?"Шейдеры":pack?"Ресурспаки":v.Loader)+" · "+(v.Installed?"выбранная сборка":"версия ещё не установлена");ModsStatus.Text="Поиск на Modrinth…";ModsPrevious.IsEnabled=false;ModsNext.IsEnabled=false;var results=await modrinth.SearchAsync(ModsQuery.Text.Trim(),gameVersion,loader,(ModsCategory.SelectedItem as ModCategory)?.Id??"",modsOffset,(ModsSort.SelectedItem as ModCategory)?.Id??"downloads",cts.Token,type);if(stamp!=modsGeneration)return;ModsResults.ItemsSource=results.Projects;modsTotal=results.Total;ModsScroll.ScrollToTop();ModsCounter.Text=results.Total==0?"Ничего не найдено":$"{modsOffset+1}–{modsOffset+results.Projects.Count} из {results.Total:N0}";ModsPrevious.IsEnabled=modsOffset>0;ModsNext.IsEnabled=modsOffset+20<modsTotal;ModsStatus.Text=shader?$"Шейдеры для Minecraft {gameVersion}. Для работы нужен Iris или OptiFine. Установка ZIP не устанавливает загрузчик шейдеров.":pack?$"Ресурспаки для Minecraft {gameVersion}. После установки включи пак в настройках игры → Ресурспаки.":v.Loader=="Vanilla"?"Для установки выбери сборку Fabric, Forge, NeoForge или Quilt в нижней панели. Сейчас показан каталог для этой версии Minecraft.":$"Совместимые моды для {gameVersion} / {v.Loader}. Обязательные зависимости устанавливаются автоматически.";if(results.Total==0)ModsStatus.Text+=" Попробуй другую категорию или запрос.";}catch(OperationCanceledException){}catch(Exception e){if(stamp==modsGeneration){ModsStatus.Text="Не удалось загрузить каталог: "+e.Message;ModsResults.ItemsSource=null;ModsCounter.Text="";}}finally{if(ReferenceEquals(modsSearchCts,cts))modsSearchCts=null;cts.Dispose();}}
+ void ModsQuery_Changed(object sender,TextChangedEventArgs e){if(!initialized||!modsReady||modsUpdating)return;modsDebounce.Stop();modsDebounce.Start();}
+ async void ModsFilter_Changed(object sender,SelectionChangedEventArgs e){if(initialized&&modsReady&&!modsUpdating){modsLoadTask=SearchModsAsync(true);await modsLoadTask;}}
+ async void ModsPrevious_Click(object sender,RoutedEventArgs e){modsOffset=Math.Max(0,modsOffset-20);await SearchModsAsync(false);}
+ async void ModsNext_Click(object sender,RoutedEventArgs e){modsOffset+=20;await SearchModsAsync(false);}
+ void ModsInstalled_Click(object sender,RoutedEventArgs e){ModsPage.Visibility=Visibility.Collapsed;FilesPage.Visibility=Visibility.Visible;ShowFiles();}
+ void ModsCancel_Click(object sender,RoutedEventArgs e)=>modInstallCts?.Cancel();
+ void ModWebsite_Click(object sender,RoutedEventArgs e){if(((Button)sender).Tag is ModProject project){var url="https://modrinth.com/"+catalogType+"/"+Uri.EscapeDataString(project.Id);try{Process.Start(new ProcessStartInfo(url){UseShellExecute=true});}catch(Exception ex){ModsStatus.Text=ex.Message;}}}
+ async void ModInstall_Click(object sender,RoutedEventArgs e){if(!ModCanInstall||SelectedChoice is not {} v||((Button)sender).Tag is not ModProject project)return;string type=catalogType;bool pack=type=="resourcepack",shader=type=="shader";modBusy=true;installing=true;modInstallCts=CancellationTokenSource.CreateLinkedTokenSource(catalogCts.Token);var ct=modInstallCts.Token;string target=LaunchEngine.InstanceDirectory(settings,v.Id);RefreshModInstallState();UpdateLaunchButton();VersionCombo.IsEnabled=false;ModsCancel.Visibility=Visibility.Visible;DownloadPanel.Visibility=Visibility.Visible;DownloadTitle.Text=project.Title;DownloadDetail.Text="Подбор версии и обязательных зависимостей…";DownloadBar.Value=0;DownloadPercent.Text="";ModsStatus.Text="Подбор совместимых файлов: "+project.Title;
+  try{var plan=await modrinth.ResolveAsync(project.Id,ModGameVersion(v),shader?"iris":pack?"minecraft":v.Loader,ct,type);ModsStatus.Text=$"Установка {project.Title} · файлов: {plan.Files.Count}";await modrinth.InstallAsync(plan,target,new Progress<ModProgress>(p=>{DownloadTitle.Text=p.Stage;DownloadDetail.Text=$"Modrinth · {Bytes(p.Done)} / {Bytes(p.Total)}";DownloadBar.Value=p.Total>0?100d*p.Done/p.Total:0;DownloadPercent.Text=$"{DownloadBar.Value:0}%";}),ct);DownloadBar.Value=100;DownloadPercent.Text="100%";DownloadTitle.Text="Установлено · "+project.Title;DownloadDetail.Text=$"Файлов: {plan.Files.Count} · {v.Loader} / {ModGameVersion(v)}";ModsStatus.Text=shader?project.Title+" установлен в shaderpacks. Включи его в меню шейдеров Iris или OptiFine.":pack?project.Title+" установлен. Включи его в Minecraft: Настройки → Ресурспаки.":project.Title+" установлен вместе с обязательными зависимостями. Можно запускать сборку.";Status((shader?"Шейдер установлен в ":pack?"Ресурспак установлен в ":"Мод установлен в ")+v.Id);}
+  catch(OperationCanceledException){ModsStatus.Text="Установка отменена. Незавершённые файлы не добавлены в сборку.";DownloadTitle.Text="Загрузка модов отменена";DownloadDetail.Text="";}
+  catch(Exception ex){ModsStatus.Text="Не удалось установить: "+ex.Message;DownloadTitle.Text="Ошибка установки дополнения";DownloadDetail.Text=ex.Message;Status("Дополнение не установлено. Подробности во вкладке «Моды».",true);}
+  finally{modInstallCts.Dispose();modInstallCts=null;modBusy=false;installing=false;VersionCombo.IsEnabled=true;ModsCancel.Visibility=Visibility.Collapsed;CancelDownloadButton.Content="Скрыть";RefreshModInstallState();UpdateLaunchButton();}
+ }
+}

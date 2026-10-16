@@ -1,0 +1,31 @@
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+using Orbit.Core;
+static class Tests {
+ static int count;static void Check(bool v,string msg){if(!v)throw new Exception(msg);count++;}
+ static void Throws(Action f,string msg){try{f();}catch{count++;return;}throw new Exception("Expected failure: "+msg);}
+ static JsonNode J(string s)=>JsonNode.Parse(s)!;
+ static int Main(string[] args){if(args.Length>=2&&args[0]=="--shaders")return ShaderChecks.Run(args[1]);if(args.Length>=2&&args[0]=="--resourcepacks")return ResourcePackChecks.Run(args[1]);if(args.Length>=2&&args[0]=="--modrinth")return ModrinthChecks.Run(args[1]);if(args.Length>=3&&args[0]=="--skin-probe")return SkinChecks.Run(args[1],args[2]);if(args.Length>=2&&args[0]=="--install")return InstallerChecks.Run(args[1]);if(args.Length>=3&&args[0]=="--classpath-probe")return ClasspathChecks.Run(args[1],args[2]);try{
+ Check(LaunchEngine.OfflineUuid("Notch")=="b50ad385829d3141a2167e7d7539ba7f","Offline UUID compatible with Java");
+ Check(LaunchEngine.Allowed(null),"Absent rules");Check(LaunchEngine.Allowed(J("[]")),"TLauncher empty rules");
+ Check(!LaunchEngine.Allowed(J("[{\"action\":\"allow\",\"os\":{\"name\":\"osx\"}}]")),"macOS excluded");
+ Check(LaunchEngine.Allowed(J("[{\"action\":\"allow\",\"os\":{\"name\":\"windows\"}}]")),"Windows allowed");
+ Check(!LaunchEngine.Allowed(J("[{\"action\":\"allow\",\"features\":{\"is_demo_user\":true}}]")),"No demo flag");
+ Check(LaunchEngine.ArgumentValues(new[]{J("{\"values\":[\"-cp\",\"test\"],\"rules\":[]}")}).SequenceEqual(new[]{"-cp","test"}),"TLauncher plural values");
+ Check(LaunchEngine.MavenPath("org.lwjgl:lwjgl:3.3.3:natives-windows")=="org/lwjgl/lwjgl/3.3.3/lwjgl-3.3.3-natives-windows.jar","Maven classifier");
+ Check(Versions.Tokenize("--gameDir \"C:\\Games\\My Game\" --x a").SequenceEqual(new[]{"--gameDir","C:\\Games\\My Game","--x","a"}),"Quoted legacy arguments");
+ string temp=Path.Combine(Path.GetTempPath(),"orbit-tests-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(temp);
+ Throws(()=>Versions.Within(temp,"../escape"),"Path traversal");
+ foreach(string id in new[]{"base","child","cycle","os-variants"})Directory.CreateDirectory(Path.Combine(temp,"versions",id));
+ File.WriteAllText(Path.Combine(temp,"versions/base/base.json"),"{\"id\":\"base\",\"mainClass\":\"Main\",\"libraries\":[{\"name\":\"a:b:1\"}],\"arguments\":{\"game\":[\"base\"]}}");
+ File.WriteAllText(Path.Combine(temp,"versions/child/child.json"),"{\"id\":\"child\",\"inheritsFrom\":\"base\",\"mainClass\":\"Child\",\"libraries\":[{\"name\":\"a:b:2\"}],\"arguments\":{\"game\":[\"child\"]}}");
+ File.WriteAllText(Path.Combine(temp,"versions/cycle/cycle.json"),"{\"inheritsFrom\":\"cycle\"}");
+ File.WriteAllText(Path.Combine(temp,"versions/os-variants/os-variants.json"),"{\"mainClass\":\"Main\",\"libraries\":[{\"name\":\"org.lwjgl.lwjgl:lwjgl:windows\",\"rules\":[{\"action\":\"allow\"},{\"action\":\"disallow\",\"os\":{\"name\":\"osx\"}}]},{\"name\":\"org.lwjgl.lwjgl:lwjgl:macos\",\"rules\":[{\"action\":\"allow\",\"os\":{\"name\":\"osx\"}}]}]}");
+ var platform=Versions.Resolve(temp,"os-variants");Check(platform.Libraries.Count==1&&platform.Libraries["org.lwjgl.lwjgl:lwjgl"]["name"]!.ToString().EndsWith(":windows"),"macOS variant cannot overwrite Windows dependency");
+ var inherited=Versions.Resolve(temp,"child");Check(inherited.MainClass=="Child"&&inherited.Libraries.Count==1&&inherited.Libraries["a:b"]["name"]!.ToString()=="a:b:2","Child library replacement");Check(LaunchEngine.ArgumentValues(inherited.GameArgs).SequenceEqual(new[]{"base","child"}),"Argument inheritance");Throws(()=>Versions.Resolve(temp,"cycle"),"Inheritance cycle");
+ if(args.Length>0){var settings=new LauncherSettings{GameRoot=args[0],Nickname="OrbitTester",Isolated=true};var versions=Versions.Scan(settings.GameRoot);Check(versions.Count>0,"Installed versions found");foreach(var v in versions){try{var p=LaunchEngine.Build(settings,v.Id);Check(!p.Arguments.Any(a=>Regex.IsMatch(a,@"\$\{[^}]+\}")),"All placeholders resolved");Check(p.Arguments.Contains("0"),"Offline token");Console.WriteLine($"PLAN {v.Id}: Java {p.Version.JavaMajor}; {p.Arguments.Count} args; {p.Missing.Count} missing files");if(v.Id=="1.21.1"){Check(p.Missing.Count==0,"Vanilla 1.21.1 ready");var missing=LaunchEngine.CheckAssets(settings,p);Console.WriteLine("ASSETS 1.21.1: "+missing.Count+" missing");Check(missing.Count==0,"All vanilla assets present");
+ var native=new LaunchPlan{Version=p.Version,Java=p.Java,GameDirectory=temp,Natives=Path.Combine(temp,"natives")};native.NativeArchives.AddRange(p.NativeArchives);LaunchEngine.ExtractNatives(native);Check(Directory.GetFiles(native.Natives,"*.dll",SearchOption.AllDirectories).Length>0,"Native DLL extraction");
+ var probe=new LaunchPlan{Version=p.Version,Java=p.Java,GameDirectory=temp,Natives=Path.Combine(temp,"probe")};string expected="Папка с пробелами / quoted \"hello\"";probe.Arguments.AddRange(new[]{"-Dorbit.probe="+expected,"-XshowSettings:properties","-version"});using(var process=LaunchEngine.Start(probe)){string output=process.StandardError.ReadToEnd();process.StandardOutput.ReadToEnd();process.WaitForExit();Check(process.ExitCode==0,"Java argument-file invocation");Check(output.Contains("orbit.probe = "+expected),"Java argument-file UTF-8/quotes/spaces");}Console.WriteLine("PASS native extraction and Java 21 argument-file probe (no Minecraft)");}}catch(Exception e){Console.WriteLine("PLAN ERROR "+v.Id+": "+e.Message);throw;}}}
+ Console.WriteLine($"PASS {count} checks; no game launched.");return 0;
+ }catch(Exception e){Console.Error.WriteLine(e);return 1;}}
+}

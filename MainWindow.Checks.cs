@@ -1,0 +1,53 @@
+using System.IO;using System.Windows;using System.Windows.Controls;using Orbit.Core;
+namespace OrbitLauncher;
+public partial class MainWindow {
+ async Task CheckUiAsync(string root){await LoadCatalogAsync();var reports=new List<string>();void Assert(bool test,string message){if(!test)throw new InvalidOperationException("UI check: "+message);reports.Add("PASS "+message);}
+  var previous=SelectedChoice;pickerMode="Remote";pickerQuery="";ApplyPickerFilter();Assert(VersionCombo.Items.Count>50,"Remote versions visible");Assert(VersionCombo.Items.OfType<VersionEntry>().All(v=>!v.Installed),"Remote tab excludes installed profiles");int releases=VersionCombo.Items.Count;SnapshotsBox.IsChecked=true;Assert(VersionCombo.Items.Count>releases,"Snapshot switch expands list");SnapshotsBox.IsChecked=false;
+  PickerSearch.Text="1.21.11";Assert(VersionCombo.Items.Count>0&&VersionCombo.Items.OfType<VersionEntry>().All(v=>v.Id.Contains("1.21.11")),"Search filters actual picker items");VersionCombo.SelectedIndex=0;Assert(SelectedChoice is {Installed:false}&&PlayButton.Content.ToString()!.Contains("СКАЧАТЬ"),"Remote selection routes action to download");Assert(VersionPickerTitle.Text==SelectedChoice!.Id,"Picker label follows selection");
+  PickerSearch.Text="";PickerInstalledTab.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Assert(VersionCombo.Items.Count==versions.Count,"Installed tab contains only local profiles");if(VersionCombo.Items.Count>0){VersionCombo.SelectedIndex=0;Assert(PlayButton.Content.ToString()!.Contains("ИГРАТЬ"),"Installed selection routes action to play");}
+  selectedChoice=previous;pickerMode="All";pickerQuery="";UpdateChoices(previous?.Id);File.WriteAllLines(Path.Combine(root,"ui-checks.txt"),reports);Navigate("Home");
+ }
+
+ async Task CheckModsUiAsync(string root){var report=new List<string>();void Assert(bool condition,string label){if(!condition)throw new InvalidOperationException("Mod UI: "+label);report.Add("PASS "+label);}
+  var previous=SelectedChoice;
+  var fabric=choices.First(v=>v.Installed&&v.Loader=="Fabric"&&ModGameVersion(v)=="1.20.1");selectedChoice=fabric;UpdateChoices(fabric.Id);Navigate("Mods");await modsLoadTask;
+  Assert(ModsPage.Visibility==Visibility.Visible&&FilesPage.Visibility==Visibility.Collapsed,"Modrinth catalog replaces file-only page");
+  Assert(ModCanInstall,"Fabric profile enables install");Assert(ModsCategory.Items.OfType<ModCategory>().Any(c=>c.Id=="optimization"),"Real categories populated");
+  ModsCategory.SelectedItem=ModsCategory.Items.OfType<ModCategory>().First(c=>c.Id=="optimization");await modsLoadTask;
+  Assert(ModsResults.Items.Count>0&&ModsResults.Items.OfType<ModProject>().All(p=>p.Categories.Contains("optimization")),"Category selection filters live results");
+  ModsCategory.SelectedIndex=0;await modsLoadTask;ModsQuery.Text="mod menu";modsDebounce.Stop();await SearchModsAsync(true);
+  Assert(ModsResults.Items.OfType<ModProject>().Any(p=>p.Slug=="modmenu"),"Typed query changes live results");
+  launching=true;RefreshModInstallState();Assert(!ModCanInstall,"Running game prevents mod installation");launching=false;
+  ModsInstalled_Click(this,new RoutedEventArgs());Assert(FilesPage.Visibility==Visibility.Visible&&ModsPage.Visibility==Visibility.Collapsed,"Installed files remain accessible");
+  selectedChoice=choices.First(v=>v.Installed&&v.Loader=="Vanilla");UpdateChoices(selectedChoice.Id);Navigate("Mods");await modsLoadTask;Assert(!ModCanInstall&&ModsStatus.Text.Contains("Fabric"),"Vanilla explains required loader and disables install");
+  selectedChoice=previous;UpdateChoices(previous?.Id);File.WriteAllLines(Path.Combine(root,"mods-ui-checks.txt"),report);Navigate("Mods");await modsLoadTask;
+ }
+
+ async Task CheckModIconsAsync(string root){Navigate("Mods");await modsLoadTask;UpdateLayout();await Dispatcher.InvokeAsync(()=>{},System.Windows.Threading.DispatcherPriority.Background);await ModIcons.WaitForPendingAsync().WaitAsync(TimeSpan.FromSeconds(40));await Dispatcher.InvokeAsync(()=>{},System.Windows.Threading.DispatcherPriority.Background);UpdateLayout();var report=new List<string>();
+  IEnumerable<System.Windows.Controls.Image> Images(DependencyObject parent){for(int i=0;i<System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);i++){var child=System.Windows.Media.VisualTreeHelper.GetChild(parent,i);if(child is System.Windows.Controls.Image image)yield return image;foreach(var nested in Images(child))yield return nested;}}
+  var icons=Images(ModsResults).Where(i=>!string.IsNullOrEmpty(ModIcons.GetUrl(i))).ToList();if(icons.Count<3)throw new Exception("No project icon URLs reached the template");
+  foreach(var image in icons.Take(3)){if(image.Source is not System.Windows.Media.Imaging.BitmapSource bitmap||bitmap.PixelWidth<=0)throw new Exception("Project icon did not decode: "+ModIcons.GetUrl(image));report.Add("PASS rendered icon: "+ModIcons.GetUrl(image));}
+  if(await ModIcons.LoadAsync("https://example.com/untrusted.png")!=null)throw new Exception("Untrusted image accepted");report.Add("PASS invalid icon URL falls back without breaking catalog");
+  string cache=Path.Combine(LauncherSettings.DataRoot,"cache","mod-icons");if(!Directory.Exists(cache)||Directory.GetFiles(cache,"*.png").Length==0)throw new Exception("Icon disk cache missing");report.Add("PASS decoded icons cached as PNG");File.WriteAllLines(Path.Combine(root,"mod-icons-checks.txt"),report);
+ }
+
+ async Task CheckMotionAsync(string root){var report=new List<string>();void Assert(bool value,string label){if(!value)throw new Exception("Motion: "+label);report.Add("PASS "+label);}bool original=settings.ReduceMotion;
+  settings.ReduceMotion=false;ApplyMotionPreference();Navigate("Library");Assert(LibraryPage.HasAnimatedProperties&&LibraryPage.RenderTransform.HasAnimatedProperties,"Page opacity and position animation clocks attached");await Task.Delay(350);Assert(Math.Abs(LibraryPage.Opacity-1)<.001&&LibraryPage.RenderTransform is System.Windows.Media.TranslateTransform t&&Math.Abs(t.Y)<.001,"Page transition settles");
+  HomeNav.RaiseEvent(new System.Windows.Input.MouseEventArgs(System.Windows.Input.Mouse.PrimaryDevice,0){RoutedEvent=MouseEnterEvent});await Task.Delay(220);Assert(HomeNav.RenderTransform is System.Windows.Media.ScaleTransform scale&&scale.HasAnimatedProperties,"Button hover attaches scale animation");
+  settings.ReduceMotion=true;ApplyMotionPreference();Navigate("Settings");Assert(SettingsPage.Opacity==1&&SettingsPage.RenderTransform is System.Windows.Media.TranslateTransform reduced&&reduced.Y==0,"Reduced motion makes page immediate");
+  HomeNav.RaiseEvent(new System.Windows.Input.MouseEventArgs(System.Windows.Input.Mouse.PrimaryDevice,0){RoutedEvent=MouseEnterEvent});await Task.Delay(20);Assert(HomeNav.RenderTransform is System.Windows.Media.ScaleTransform still&&still.ScaleX==1,"Reduced motion disables button scaling");Assert((System.Windows.Controls.Primitives.PopupAnimation)Application.Current.Resources["PopupMotion"]==System.Windows.Controls.Primitives.PopupAnimation.None,"Reduced motion disables popup animation");
+  settings.ReduceMotion=original;ApplyMotionPreference();Navigate("Home");File.WriteAllLines(Path.Combine(root,"motion-checks.txt"),report);
+ }
+
+ async Task CheckProfilePacksAsync(string root){var report=new List<string>();void Assert(bool value,string label){if(!value)throw new Exception(label);report.Add("PASS "+label);}string oldText=NicknameBox.Text,oldNick=settings.Nickname;var previous=SelectedChoice;
+  try{profileSettingsRoot=Path.Combine(root,"nickname-roundtrip-0.6");new LauncherSettings{Nickname="Before",SkinEnabled=true,MemoryMb=8192}.Save(profileSettingsRoot);suppressProfileSave=false;NicknameBox.Text="Orbit_Test06";await Task.Delay(650);var saved=LauncherSettings.Load(profileSettingsRoot);Assert(saved.Nickname=="Orbit_Test06","Nickname persists after typing without game launch");Assert(saved.SkinEnabled&&saved.MemoryMb==8192,"Nickname autosave preserves other persisted settings");NicknameBox.Text="SavedOnClose";nicknameSaveTimer.Stop();PersistNickname();Assert(LauncherSettings.Load(profileSettingsRoot).Nickname=="SavedOnClose","Closing flush persists latest nickname");NicknameBox.Text="#";await Task.Delay(600);Assert(LauncherSettings.Load(profileSettingsRoot).Nickname=="SavedOnClose","Incomplete invalid nickname preserves last valid value");}
+  finally{nicknameSaveTimer.Stop();suppressProfileSave=true;profileSettingsRoot=null;settings.Nickname=oldNick;NicknameBox.Text=oldText;}
+  selectedChoice=choices.First(v=>v.Installed&&v.Loader=="Vanilla"&&v.Id=="1.21.1");UpdateChoices(selectedChoice.Id);catalogType="resourcepack";Navigate("Mods");await modsLoadTask;
+  Assert(ModCanInstall,"Resourcepack installation enabled for Vanilla");Assert(ModsResults.Items.Count>0,"Live resourcepack catalog populated");Assert(ModsCategory.Items.Count>1,"Resourcepack-specific categories populated");ModsQuery.Text="bare bones";modsDebounce.Stop();await SearchModsAsync(true);Assert(ModsResults.Items.Count>0,"Resourcepack search returns actual results");ModsInstalled_Click(this,new RoutedEventArgs());Assert(Path.GetFileName(filesFolder)=="resourcepacks","Installed resources open resourcepacks folder");
+  catalogType="mod";selectedChoice=previous;UpdateChoices(previous?.Id);Navigate("Mods");await modsLoadTask;File.WriteAllLines(Path.Combine(root,"profile-pack-checks.txt"),report);
+ }
+
+ async Task CheckShadersAsync(string root){var report=new List<string>();void Assert(bool value,string label){if(!value)throw new Exception(label);report.Add("PASS "+label);}var previous=SelectedChoice;selectedChoice=choices.First(v=>v.Installed&&v.Loader=="Vanilla"&&v.Id=="1.21.1");UpdateChoices(selectedChoice.Id);catalogType="shader";Navigate("Mods");await modsLoadTask;
+  Assert(ShadersTypeButton.IsEnabled&&ModCanInstall,"Shader download available for installed Vanilla profile");Assert(ModsResults.Items.Count>0&&ModsCategory.Items.Count>1,"Live shader catalog and categories populated");Assert(ModsStatus.Text.Contains("Iris")&&ModsStatus.Text.Contains("OptiFine"),"Shader loader requirement explained");ModsQuery.Text="complementary";modsDebounce.Stop();await SearchModsAsync(true);Assert(ModsResults.Items.Count>0,"Shader search returns actual results");ModsInstalled_Click(this,new RoutedEventArgs());Assert(Path.GetFileName(filesFolder)=="shaderpacks","Installed shaders use shaderpacks folder");File.WriteAllLines(Path.Combine(root,"shader-ui-checks.txt"),report);ModsPage.Visibility=Visibility.Visible;FilesPage.Visibility=Visibility.Collapsed;await SearchModsAsync(true);
+ }
+}

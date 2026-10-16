@@ -1,0 +1,1 @@
+public final class OrbitClasspathProbe { public static void main(String[] args) throws Exception { for (String name : new String[] { "org.lwjgl.LWJGLException", "org.lwjgl.util.vector.Vector3f", "net.minecraft.client.main.Main" }) { Class.forName(name, false, ClassLoader.getSystemClassLoader()); System.out.println("PASS " + name); } } }
