@@ -1,6 +1,6 @@
 # ORBIT Launcher
 
-Minecraft Java launcher for Windows · **0.7.0 / preview**
+Minecraft Java launcher for Windows · **0.7.1 / preview**
 
 ORBIT is an independent C# / WPF launcher for .NET 8, built with assistance from OpenAI Codex.
 
@@ -14,7 +14,7 @@ ORBIT is an independent C# / WPF launcher for .NET 8, built with assistance from
 - Install Modrinth modpacks as independent, launchable library entries. The MRPACK installer provisions the exact declared Minecraft and loader versions.
 - Search and install Modrinth mods, resource packs and shaders, with categories, icons, SHA-512 verification, required mod dependencies and cancellation.
 - Open each instance folder from its library card or the folder icon beside the selected version. Settings also has direct instance, mods and Minecraft root folder buttons.
-- Offline nickname with autosave; local PNG skins (64×64 / 64×32) and named skin presets with classic / slim arms.
+- Offline nickname with autosave; local PNG skins (64×64 / 64×32) and named skin presets with classic / slim arms, front-facing character cards and one-click selection.
 - Close the Minecraft process launched by ORBIT using the main button. Requests normal shutdown first; forced termination requires a separate confirmation.
 - Configure game window resolution, fullscreen, minimize-on-launch, memory, Java, animation reduction, launcher window size persistence and log scrolling.
 - Hover feedback stays within card bounds; usable scrollbars and taskbar-aware maximization.

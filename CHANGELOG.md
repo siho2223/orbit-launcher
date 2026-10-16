@@ -1,3 +1,9 @@
+# 0.7.1
+
+- Fixed language and skin-preset dropdowns showing record IDs instead of titles.
+- Saved skins now have front-facing character cards. Click a card to apply the skin.
+- Named preset dropdown remains below the gallery; existing saved skins are retained.
+
 # 0.7.0
 
 - Default English UI with live Russian switching.

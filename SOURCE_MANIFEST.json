@@ -1,6 +1,6 @@
 {
   "project": "ORBIT",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "entries": [
     {
       "path": ".editorconfig",
@@ -39,8 +39,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 1555,
-      "sha256": "25204a1bee4e26b81330c59a89dcce7407b1d40ca541ce2e9fe00fe69e5732a4"
+      "size": 1823,
+      "sha256": "87c86b17a25d3387a6d85160985b217d23c51648a8256cb732f6cc0e41b9f3a1"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -135,7 +135,7 @@
     {
       "path": "installer/ORBIT.iss",
       "size": 2157,
-      "sha256": "c329d959a49cec6229f310a698c3cbe2e57e25ba5c8dfae86be3ca1ba16fe064"
+      "sha256": "67e9e1ff6f442d841437d9266b86911ecd297cee617cea842da85ef1c4aec532"
     },
     {
       "path": "LICENSE",
@@ -168,6 +168,11 @@
       "sha256": "f55910b8afa58fea07600517030b354cc5518dff482c0610b1e0a374f1fea8aa"
     },
     {
+      "path": "MainWindow.PresetChecks.cs",
+      "size": 1649,
+      "sha256": "9f5a18b0070ba1fb67c497c4d8d208f546e7f67da6f191f40a7c4b66cb571040"
+    },
+    {
       "path": "MainWindow.Profile.cs",
       "size": 1517,
       "sha256": "67852c62916a97683489c4629f6c7ab4a4aa627b05b66f9850412f82a073f5ed"
@@ -179,8 +184,8 @@
     },
     {
       "path": "MainWindow.Upgrade.cs",
-      "size": 8595,
-      "sha256": "db6b14232300bbdf61e89ce6758caa689ab6d6a049fbe87c880a3342d6692117"
+      "size": 8936,
+      "sha256": "9abe6a18aebbe7f6756d48a1369214467fb16165f8e2e29c77f3b32afa235fd5"
     },
     {
       "path": "MainWindow.UpgradeChecks.cs",
@@ -189,13 +194,13 @@
     },
     {
       "path": "MainWindow.xaml",
-      "size": 33464,
-      "sha256": "7f9f06a69511541ecc538a66e521951f4086c1f19663666412a225d405ac3040"
+      "size": 34532,
+      "sha256": "422cae24e4ce871e54f380cc397b04637dff0a78df595ee7d51869b43c2a57a7"
     },
     {
       "path": "MainWindow.xaml.cs",
-      "size": 18245,
-      "sha256": "745e7a852718c0670f835cd267babd7b2a06835d2ca7cd3c703c7916ea7300f4"
+      "size": 18440,
+      "sha256": "814183c2c30fa6350931ffbee84458ca498a1a41a11331851623070a53ef7cec"
     },
     {
       "path": "ModIcons.cs",
@@ -215,12 +220,12 @@
     {
       "path": "OrbitLauncher.csproj",
       "size": 681,
-      "sha256": "1c8293ff59fa68617496431c9be6832ed483ebc55c8579d3ee39962c327e3e9f"
+      "sha256": "b18dd243d31d59b0ada2ab51f0f83d752f48db7cada4a5adee842e7492302783"
     },
     {
       "path": "README.md",
-      "size": 5143,
-      "sha256": "32bc068681596d9a476b685860203cefe16caf8161c10594449837e95edd327d"
+      "size": 5197,
+      "sha256": "cd8d8fc94049e88c27f03d24662d3a9f29bbe2daf31ecc1cfa39bf7b980e9e05"
     },
     {
       "path": "scripts/build-installer.ps1",
@@ -241,6 +246,11 @@
       "path": "ScrollViewportConverter.cs",
       "size": 627,
       "sha256": "9217498310a6ab4ab06b1682f7def7ded4c15bc142cf9d8e9c0bfdf52c6b3d97"
+    },
+    {
+      "path": "SkinPresetThumbnail.cs",
+      "size": 2073,
+      "sha256": "404e1aae2cbb33d0adacfa075ea5f232b687a5b2bfb2bce1c843193018ec3ad0"
     },
     {
       "path": "SkinPreview.cs",
