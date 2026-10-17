@@ -1,0 +1,104 @@
+Bundled license information:
+
+react/cjs/react.production.js:
+  /**
+   * @license React
+   * react.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   */
+
+scheduler/cjs/scheduler.production.js:
+  /**
+   * @license React
+   * scheduler.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   */
+
+react-dom/cjs/react-dom.production.js:
+  /**
+   * @license React
+   * react-dom.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   */
+
+react-dom/cjs/react-dom-client.production.js:
+  /**
+   * @license React
+   * react-dom-client.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   */
+
+react/cjs/react-jsx-runtime.production.js:
+  /**
+   * @license React
+   * react-jsx-runtime.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   */
+
+three/build/three.core.js:
+three/build/three.module.js:
+  /**
+   * @license
+   * Copyright 2010-2025 Three.js Authors
+   * SPDX-License-Identifier: MIT
+   */
+
+skin3d/dist/Model.js:
+  /**
+   * @file Model.ts
+   * @description This file defines the 3D model classes for Minecraft-style player models, including skin, cape, elytra, and ears.
+   * @author Cosmic-fi
+   * @license MIT
+   */
+
+skin3d/dist/Animation.js:
+  /**
+   * @file Animation.ts
+   * @description This file defines the PlayerAnimation class and its subclasses for animating PlayerObject instances.
+   * @author Cosmic-fi
+   * @license MIT
+   */
+
+skin3d/dist/Nametag.js:
+  /**
+   * @file Nametag.ts
+   * @description This file defines the NameTagObject class for creating Minecraft-style name tags.
+   * @author Cosmic-fi
+   * @license MIT
+   */
+
+skin3d/dist/skin3d.js:
+  /**
+   * @file Render.ts
+   * @description This file defines the Render class that renders a 3D player model on a canvas.
+   * @author Cosmic-fi
+   * @license MIT
+   */
+
+skin3d/dist/index.mjs:
+  /**
+   * @file index.ts
+   * @description This file serves as the main entry point for the skin3d library, exporting all necessary classes and functions.
+   * @author Cosmic-fi
+   * @license MIT
+   */

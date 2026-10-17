@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -19,7 +19,16 @@ public sealed class ModrinthClient:IDisposable {
  static string Id(string id)=>Regex.IsMatch(id,"^[a-zA-Z0-9_-]{1,160}$")?id:throw new InvalidDataException(Localization.T("Некорректный ID Modrinth."));
  public static string Loader(string loader)=>loader.ToLowerInvariant() is "fabric" or "forge" or "neoforge" or "quilt"?loader.ToLowerInvariant():throw new InvalidDataException(Localization.T("Для модов выбери установленную сборку Fabric, Forge, NeoForge или Quilt в нижней панели."));
  public static Uri DownloadUri(string url){if(!Uri.TryCreate(url,UriKind.Absolute,out var uri)||uri.Scheme!="https"||uri.Host!="cdn.modrinth.com"||!uri.IsDefaultPort||uri.UserInfo!="")throw new InvalidDataException(Localization.T("Файл должен находиться на HTTPS CDN Modrinth."));return uri;}
- async Task<JsonNode> Api(string path,CancellationToken ct){using var response=await http.GetAsync("https://api.modrinth.com/v2/"+path,HttpCompletionOption.ResponseHeadersRead,ct).ConfigureAwait(false);if(response.StatusCode==(HttpStatusCode)429)throw new IOException(Localization.T("Modrinth просит подождать. Повтори запрос чуть позже."));response.EnsureSuccessStatusCode();using var stream=await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);using var buffer=new MemoryStream();byte[] chunk=new byte[65536];int n;while((n=await stream.ReadAsync(chunk,ct).ConfigureAwait(false))>0){if(buffer.Length+n>24*1024*1024)throw new InvalidDataException(Localization.T("Слишком большой ответ Modrinth."));buffer.Write(chunk,0,n);}return JsonNode.Parse(buffer.ToArray())??throw new InvalidDataException(Localization.T("Пустой ответ Modrinth."));}
+ async Task<JsonNode> ApiOnce(string path,CancellationToken ct){using var response=await http.GetAsync("https://api.modrinth.com/v2/"+path,HttpCompletionOption.ResponseHeadersRead,ct).ConfigureAwait(false);if(response.StatusCode==(HttpStatusCode)429)throw new IOException(Localization.T("Modrinth просит подождать. Повтори запрос чуть позже."));response.EnsureSuccessStatusCode();using var stream=await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);using var buffer=new MemoryStream();byte[] chunk=new byte[65536];int n;while((n=await stream.ReadAsync(chunk,ct).ConfigureAwait(false))>0){if(buffer.Length+n>24*1024*1024)throw new InvalidDataException(Localization.T("Слишком большой ответ Modrinth."));buffer.Write(chunk,0,n);}return JsonNode.Parse(buffer.ToArray())??throw new InvalidDataException(Localization.T("Пустой ответ Modrinth."));}
+ async Task<JsonNode> Api(string path,CancellationToken ct){
+  for(int attempt=0;;attempt++){
+   ct.ThrowIfCancellationRequested();using var timeout=CancellationTokenSource.CreateLinkedTokenSource(ct);timeout.CancelAfter(TimeSpan.FromSeconds(25));
+   try{return await ApiOnce(path,timeout.Token).ConfigureAwait(false);}
+   catch(HttpRequestException ex)when(attempt<2&&(ex.StatusCode==null||ex.StatusCode is HttpStatusCode.BadGateway or HttpStatusCode.ServiceUnavailable or HttpStatusCode.GatewayTimeout)){}
+   catch(OperationCanceledException ex)when(!ct.IsCancellationRequested){if(attempt>=2)throw new IOException(Localization.T("Modrinth не ответил вовремя. Повтори поиск."),ex);}
+   await Task.Delay(TimeSpan.FromMilliseconds(500*(attempt+1)),ct).ConfigureAwait(false);
+  }
+ }
  static string S(JsonNode? node,string key)=>node?[key]?.ToString()??"";
  static string[] A(JsonNode? node,string key)=>node?[key]?.AsArray().Select(x=>x!.ToString()).ToArray()??Array.Empty<string>();
  public async Task<IReadOnlyList<ModCategory>> CategoriesAsync(CancellationToken ct=default,string projectType="mod"){var data=await Api("tag/category",ct);return data.AsArray().Where(n=>S(n,"project_type")==projectType).Select(n=>new ModCategory(S(n,"name"),CategoryTitle(S(n,"name")))).OrderBy(n=>n.Title).ToList();}

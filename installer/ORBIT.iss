@@ -1,5 +1,5 @@
-﻿#ifndef AppVersion
-  #define AppVersion "0.7.1"
+#ifndef AppVersion
+  #define AppVersion "0.12.0"
 #endif
 #ifndef PayloadDir
   #error PayloadDir must point to the staged runtime files

@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 namespace Orbit.Core;
 public sealed record SkinPreset(string Id,string Title,string Model);
 public static class SkinPresets {

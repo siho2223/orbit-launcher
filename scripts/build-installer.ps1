@@ -1,4 +1,4 @@
-﻿param(
+param(
     [string]$Iscc = 'ISCC.exe',
     [string]$PublishDir,
     [string]$OutputDir

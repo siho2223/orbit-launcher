@@ -1,0 +1,80 @@
+name: Build and publish ORBIT
+on:
+  push:
+    branches: [main]
+    paths:
+      - OrbitLauncher.csproj
+      - .github/workflows/release.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: orbit-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: 8.0.x
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: BrawlUI/package-lock.json
+      - name: Build frontend
+        shell: pwsh
+        run: |
+          npm ci --prefix BrawlUI --ignore-scripts
+          if ($LASTEXITCODE -ne 0) { throw 'npm ci failed' }
+          npm --prefix BrawlUI run build
+          if ($LASTEXITCODE -ne 0) { throw 'Frontend build failed' }
+      - name: Verify and publish launcher
+        shell: pwsh
+        run: |
+          ./scripts/verify-source.ps1
+          ./scripts/build.ps1 -Publish -Test
+          dotnet run --project Tests -c Release -- --quick-loader artifacts/ci-loader-tests
+          if ($LASTEXITCODE -ne 0) { throw 'Loader checks failed' }
+          dotnet run --project Tests -c Release -- --export artifacts/ci-export-tests
+          if ($LASTEXITCODE -ne 0) { throw 'Export checks failed' }
+      - name: Prepare verified portable Inno Setup
+        shell: pwsh
+        run: |
+          $compiler = Join-Path $env:RUNNER_TEMP 'innosetup-6.7.3.exe'
+          Invoke-WebRequest 'https://github.com/jrsoftware/issrc/releases/download/is-6_7_3/innosetup-6.7.3.exe' -OutFile $compiler
+          if ((Get-FileHash $compiler -Algorithm SHA256).Hash.ToLowerInvariant() -ne '9c73c3bae7ed48d44112a0f48e66742c00090bdb5bef71d9d3c056c66e97b732') { throw 'Compiler checksum mismatch' }
+          $compilerDir = Join-Path $env:RUNNER_TEMP 'orbit-inno'
+          $process = Start-Process $compiler -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-','/PORTABLE=1',('/DIR="'+$compilerDir+'"'),'/NOICONS') -WindowStyle Hidden -PassThru -Wait
+          if ($process.ExitCode -ne 0) { throw 'Compiler extraction failed' }
+          ./scripts/build-installer.ps1 -Iscc (Join-Path $compilerDir 'ISCC.exe') -PublishDir artifacts/publish/win-x64
+      - name: Package source and installer source
+        shell: pwsh
+        run: |
+          python scripts/package-source.py
+          if ($LASTEXITCODE -ne 0) { throw 'Source packaging failed' }
+      - name: Publish preview release with verified assets
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          [xml]$project = Get-Content OrbitLauncher.csproj
+          $version = [string]$project.Project.PropertyGroup.Version
+          $tag = 'v'+$version
+          gh release view $tag --json tagName *> $null
+          if ($LASTEXITCODE -eq 0) { throw ('Release already exists: '+$tag) }
+          $setup = 'artifacts/installer/ORBIT-Setup-'+$version+'-Windows-x64.exe'
+          $source = 'artifacts/delivery/ORBIT-'+$version+'-source.zip'
+          $installerSource = 'artifacts/delivery/ORBIT-'+$version+'-installer-source.zip'
+          gh release create $tag --target $env:GITHUB_SHA --draft --prerelease --title ('ORBIT '+$version+' — Default, Forge & Fabric') --notes-file ('docs/RELEASE-'+$version+'.md')
+          if ($LASTEXITCODE -ne 0) { throw 'Release creation failed' }
+          gh release upload $tag $setup ($setup+'.sha256') $source ($source+'.sha256') $installerSource ($installerSource+'.sha256')
+          if ($LASTEXITCODE -ne 0) { throw 'Asset upload failed; release kept as draft' }
+          gh release edit $tag --draft=false
+          if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }

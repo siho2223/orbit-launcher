@@ -18,7 +18,7 @@ dotnet build .\OrbitLauncher.csproj -c Release
 ## Автономная сборка
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scriptsuild.ps1 -Publish
+powershell -ExecutionPolicy Bypass -File .\scripts/build.ps1 -Publish
 ```
 
 Выход: `artifacts/publish/win-x64`. Публикация использует win-x64, self-contained и SingleFile с включёнными native-компонентами. Скрипт копирует README, лицензии и уведомления зависимостей. Для распространения архивируй всю папку результата.
@@ -26,7 +26,7 @@ powershell -ExecutionPolicy Bypass -File .\scriptsuild.ps1 -Publish
 ## Проверка чистоты исходников
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scriptserify-source.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts/verify-source.ps1
 ```
 
 Скрипт проверяет обязательные файлы, хеш authlib-injector и отсутствие файлов игр/настроек/ключей в предназначенном для публикации дереве. Это локальная проверка состава, не полноценный аудит безопасности программы.
@@ -68,3 +68,10 @@ dotnet run --project .\Tests -c Release -- --shaders "$PWD\artifacts\shader-test
 ```
 
 Готовые EXE и SHA-256: `artifacts/installer`. Установка для текущего пользователя, Windows 10/11 x64; ярлык рабочего стола необязателен. Удаление программы сохраняет игры и пользовательские данные. Бинарный файл не подписан сертификатом издателя.
+
+
+## Архивы исходников и публикация
+
+`python scripts/package-source.py` создаёт проверенные ZIP исходников приложения и установщика в `artifacts/delivery`, вместе с SHA-256. Оба архива содержат полный проект; исходники установщика описаны в INSTALLER-SOURCE.md.
+
+Workflow `.github/workflows/release.yml` собирает и проверяет приложение и установщик из коммита main, затем публикует preview-релиз с установщиком, обоими исходными архивами и контрольными суммами. Используется стандартный GitHub Actions token; секреты аккаунтов не помещаются в код.

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -25,6 +25,9 @@ public partial class MainWindow {
    skinLegacy=image?.PixelHeight==32;
    if(skinLegacy)skinModel="classic";
    SkinViewport.Draw(image,skinModel=="slim");
+   LobbySkinViewport?.Draw(image??LobbyAvatar(),image!=null&&skinModel=="slim");
+   XmclSidebarSkin?.Draw(image??LobbyAvatar(),image!=null&&skinModel=="slim");
+   LobbyFace.Source=new CroppedBitmap(image??LobbyAvatar(),new Int32Rect(8,8,8,8));
    SkinInfo.Text=image==null?Loc.T("PNG 64×64 или 64×32"):$"{image.PixelWidth}×{image.PixelHeight} · "+(skinModel=="slim"?Loc.T("Alex · узкие руки"):Loc.T("Steve · обычные руки"));
    SkinStatus.Text=pendingSkin!=null?Loc.T("Предпросмотр скина."):settings.SkinEnabled
     ?(launching?Loc.T("Скин сохранён и включён. Для применения изменений закрой Minecraft и запусти игру снова через ORBIT."):Loc.T("Скин сохранён и включён. Запусти Minecraft через ORBIT — он подключится автоматически."))

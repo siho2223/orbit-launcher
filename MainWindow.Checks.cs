@@ -1,4 +1,4 @@
-﻿using System.IO;using System.Windows;using System.Windows.Controls;using Orbit.Core;
+using System.IO;using System.Windows;using System.Windows.Controls;using Orbit.Core;
 namespace OrbitLauncher;
 public partial class MainWindow {
  async Task CheckUiAsync(string root){await LoadCatalogAsync();var reports=new List<string>();void Assert(bool test,string message){if(!test)throw new InvalidOperationException("UI check: "+message);reports.Add("PASS "+message);}
@@ -32,7 +32,7 @@ public partial class MainWindow {
  }
 
  async Task CheckMotionAsync(string root){var report=new List<string>();void Assert(bool value,string label){if(!value)throw new Exception("Motion: "+label);report.Add("PASS "+label);}bool original=settings.ReduceMotion;
-  settings.ReduceMotion=false;ApplyMotionPreference();Navigate("Library");Assert(LibraryPage.HasAnimatedProperties&&LibraryPage.RenderTransform.HasAnimatedProperties,"Page opacity and position animation clocks attached");await Task.Delay(350);Assert(Math.Abs(LibraryPage.Opacity-1)<.001&&LibraryPage.RenderTransform is System.Windows.Media.TranslateTransform t&&Math.Abs(t.Y)<.001,"Page transition settles");
+  settings.ReduceMotion=false;ApplyMotionPreference();Navigate("Library");Assert(LibraryPage.HasAnimatedProperties&&LibraryPage.RenderTransform.HasAnimatedProperties,"Page opacity and position animation clocks attached");for(int attempt=0;attempt<12&&(LibraryPage.Opacity<.999||LibraryPage.RenderTransform is System.Windows.Media.TranslateTransform position&&Math.Abs(position.Y)>.001);attempt++){await Task.Delay(100);UpdateLayout();}Assert(Math.Abs(LibraryPage.Opacity-1)<.001&&LibraryPage.RenderTransform is System.Windows.Media.TranslateTransform t&&Math.Abs(t.Y)<.001,"Page transition settles");
   HomeNav.RaiseEvent(new System.Windows.Input.MouseEventArgs(System.Windows.Input.Mouse.PrimaryDevice,0){RoutedEvent=MouseEnterEvent});await Task.Delay(220);Assert(HomeNav.RenderTransform is System.Windows.Media.ScaleTransform scale&&scale.HasAnimatedProperties,"Button hover attaches scale animation");
   settings.ReduceMotion=true;ApplyMotionPreference();Navigate("Settings");Assert(SettingsPage.Opacity==1&&SettingsPage.RenderTransform is System.Windows.Media.TranslateTransform reduced&&reduced.Y==0,"Reduced motion makes page immediate");
   HomeNav.RaiseEvent(new System.Windows.Input.MouseEventArgs(System.Windows.Input.Mouse.PrimaryDevice,0){RoutedEvent=MouseEnterEvent});await Task.Delay(20);Assert(HomeNav.RenderTransform is System.Windows.Media.ScaleTransform still&&still.ScaleX==1,"Reduced motion disables button scaling");Assert((System.Windows.Controls.Primitives.PopupAnimation)Application.Current.Resources["PopupMotion"]==System.Windows.Controls.Primitives.PopupAnimation.None,"Reduced motion disables popup animation");

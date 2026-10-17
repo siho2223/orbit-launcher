@@ -1,0 +1,23 @@
+using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows;
+using Orbit.Core;
+namespace OrbitLauncher;
+public partial class MainWindow {
+ readonly System.Collections.Concurrent.ConcurrentDictionary<string,byte> authLogSecrets=new(StringComparer.Ordinal);
+ void RememberAuthSecrets(MicrosoftSession account){foreach(string token in new[]{account.AccessToken,account.RefreshToken})if(!string.IsNullOrEmpty(token))authLogSecrets.TryAdd(token,0);}
+ MicrosoftSession? onlineSession;CancellationTokenSource? microsoftCts;string microsoftStatus="",microsoftUserCode="";
+ void InitializeMicrosoftProfile(){if(suppressProfileSave)return;try{if(settings.AccountKind=="microsoft")onlineSession=MicrosoftAccountStore.Load();if(onlineSession!=null){RememberAuthSecrets(onlineSession);NicknameBox.Text=onlineSession.Name;NicknameBox.IsReadOnly=true;}}catch(Exception error)when(error is IOException or System.Security.Cryptography.CryptographicException or System.Text.Json.JsonException){microsoftStatus=Loc.Language=="ru"?"Войди в Microsoft повторно.":"Sign in to Microsoft again.";}}
+ async Task SignInMicrosoftAsync(){
+  if(microsoftCts!=null)return;if(!MicrosoftSignIn.IsConfigured){microsoftStatus=Loc.Language=="ru"?"Вход Microsoft ещё не настроен разработчиком ORBIT.":"Microsoft sign-in has not been configured by the ORBIT developer yet.";Status(microsoftStatus);XmclProfileError.Text=microsoftStatus;return;}
+  using var cts=new CancellationTokenSource();cts.CancelAfter(TimeSpan.FromMinutes(20));microsoftCts=cts;
+  try{using var auth=new MicrosoftSignIn(MicrosoftSignIn.ConfiguredClientId);var challenge=await auth.BeginAsync(cts.Token);microsoftUserCode=challenge.UserCode;microsoftStatus=Loc.Language=="ru"?"Открой страницу Microsoft и введи код.":"Open the Microsoft page and enter the code.";Status(microsoftStatus+" "+microsoftUserCode);XmclProfileError.Text=microsoftStatus+" "+microsoftUserCode;SyncBrawlState();Process.Start(new ProcessStartInfo(challenge.VerificationUri.AbsoluteUri){UseShellExecute=true});var account=await auth.CompleteAsync(challenge,cts.Token);cts.Token.ThrowIfCancellationRequested();MicrosoftAccountStore.Save(account);settings.OfflineNickname=settings.AccountKind=="offline"?NicknameBox.Text:settings.OfflineNickname;onlineSession=account;RememberAuthSecrets(account);settings.AccountKind="microsoft";NicknameBox.Text=account.Name;NicknameBox.IsReadOnly=true;XmclProfileNickname.IsReadOnly=true;if(!suppressProfileSave)settings.Save();microsoftStatus=Loc.Language=="ru"?"Выполнен вход: "+account.Name:"Signed in: "+account.Name;Status(microsoftStatus);}
+  catch(OperationCanceledException){microsoftStatus=Loc.Language=="ru"?"Вход отменён.":"Sign-in cancelled.";}catch(Exception error){microsoftStatus=error is System.Net.Http.HttpRequestException?"Microsoft connection failed.":error.Message;Status(microsoftStatus,true);}finally{microsoftUserCode="";microsoftCts=null;SyncBrawlState();}
+ }
+ async System.Threading.Tasks.Task<MicrosoftSession?> SessionForLaunchAsync(){if(settings.AccountKind!="microsoft")return null;if(!MicrosoftSignIn.IsConfigured)throw new InvalidOperationException("Microsoft sign-in is not configured for this ORBIT build.");if(onlineSession==null)throw new InvalidOperationException(Loc.Language=="ru"?"Сначала войди в Microsoft.":"Sign in to Microsoft first.");if(onlineSession.Expires>DateTimeOffset.UtcNow.AddMinutes(2))return onlineSession;using var service=new MicrosoftSignIn(MicrosoftSignIn.ConfiguredClientId);var refreshed=await service.RefreshAsync(onlineSession.RefreshToken,catalogCts.Token);MicrosoftAccountStore.Save(refreshed);onlineSession=refreshed;RememberAuthSecrets(refreshed);return onlineSession;}
+ void UseOfflineProfile(string nickname){if(!Regex.IsMatch(nickname,"^[A-Za-z0-9_]{3,16}$")){Status(Loc.Language=="ru"?"Ник: 3–16 латинских букв, цифр или _.":"Use 3–16 letters, digits or _.",true);return;}microsoftCts?.Cancel();settings.AccountKind="offline";settings.OfflineNickname=nickname;onlineSession=null;NicknameBox.IsReadOnly=false;XmclProfileNickname.IsReadOnly=false;NicknameBox.Text=nickname;if(!suppressProfileSave)settings.Save();Status(Loc.Language=="ru"?"Выбран локальный профиль.":"Offline profile selected.");}
+ void SignOutMicrosoft(){microsoftCts?.Cancel();MicrosoftAccountStore.Delete();UseOfflineProfile(Regex.IsMatch(settings.OfflineNickname,"^[A-Za-z0-9_]{3,16}$")?settings.OfflineNickname:"Player");}
+ void MicrosoftSignOut_Click(object sender,RoutedEventArgs e){SignOutMicrosoft();XmclProfileError.Text=Loc.Language=="ru"?"Выбран локальный профиль.":"Offline profile selected.";}
+ async void MicrosoftSignIn_Click(object sender,RoutedEventArgs e){await SignInMicrosoftAsync();}
+}

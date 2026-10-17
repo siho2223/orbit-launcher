@@ -1,11 +1,11 @@
-﻿using System.Text.Json.Nodes;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Orbit.Core;
 static class Tests {
  static int count;static void Check(bool v,string msg){if(!v)throw new Exception(msg);count++;}
  static void Throws(Action f,string msg){try{f();}catch{count++;return;}throw new Exception("Expected failure: "+msg);}
  static JsonNode J(string s)=>JsonNode.Parse(s)!;
- static int Main(string[] args){if(args.Length>=3&&args[0]=="--loaders")return LoaderChecks.Run(args[1],args[2]);if(args.Length>=2&&args[0]=="--upgrade")return UpgradeChecks.Run(args[1],args.Contains("--live"));if(args.Length>=2&&args[0]=="--shaders")return ShaderChecks.Run(args[1]);if(args.Length>=2&&args[0]=="--resourcepacks")return ResourcePackChecks.Run(args[1]);if(args.Length>=2&&args[0]=="--modrinth")return ModrinthChecks.Run(args[1]);if(args.Length>=3&&args[0]=="--skin-probe")return SkinChecks.Run(args[1],args[2]);if(args.Length>=2&&args[0]=="--install")return InstallerChecks.Run(args[1]);if(args.Length>=3&&args[0]=="--classpath-probe")return ClasspathChecks.Run(args[1],args[2]);try{
+ static int Main(string[] args){if(args.Length>=2&&args[0]=="--quick-loader")return QuickLoaderChecks.Run(args[1]).GetAwaiter().GetResult();if(args.Length>=3&&args[0]=="--quick-loader-live")return QuickLoaderChecks.Live(args[1],args[2]).GetAwaiter().GetResult();if(args.Length>=2&&args[0]=="--microsoft")return MicrosoftChecks.Run(args[1]).GetAwaiter().GetResult();if(args.Length>=2&&args[0]=="--instances")return InstanceChecks.Run(args[1]);if(args.Length>=2&&args[0]=="--export")return ExportChecks.Run(args[1]);if(args.Length>=3&&args[0]=="--loaders")return LoaderChecks.Run(args[1],args[2]);if(args.Length>=2&&args[0]=="--upgrade")return UpgradeChecks.Run(args[1],args.Contains("--live"));if(args.Length>=2&&args[0]=="--shaders")return ShaderChecks.Run(args[1]);if(args.Length>=2&&args[0]=="--resourcepacks")return ResourcePackChecks.Run(args[1]);if(args.Length>=2&&args[0]=="--modrinth")return ModrinthChecks.Run(args[1]);if(args.Length>=3&&args[0]=="--skin-probe")return SkinChecks.Run(args[1],args[2]);if(args.Length>=2&&args[0]=="--install")return InstallerChecks.Run(args[1]);if(args.Length>=3&&args[0]=="--classpath-probe")return ClasspathChecks.Run(args[1],args[2]);try{
  Check(LaunchEngine.OfflineUuid("Notch")=="b50ad385829d3141a2167e7d7539ba7f","Offline UUID compatible with Java");
  Check(LaunchEngine.Allowed(null),"Absent rules");Check(LaunchEngine.Allowed(J("[]")),"TLauncher empty rules");
  Check(!LaunchEngine.Allowed(J("[{\"action\":\"allow\",\"os\":{\"name\":\"osx\"}}]")),"macOS excluded");

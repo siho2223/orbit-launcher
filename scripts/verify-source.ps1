@@ -10,7 +10,7 @@ if ((Get-FileHash -LiteralPath $agent -Algorithm SHA256).Hash.ToLowerInvariant()
 $checked = 0
 foreach ($file in (Get-ChildItem -LiteralPath $projectRoot -Recurse -File -Force)) {
     $relative = $file.FullName.Substring($projectRoot.Length + 1).Replace('\','/')
-    if ($relative -match '(^|/)(\.git|bin|obj|artifacts|release[^/]*)(/|$)') { continue }
+    if ($relative -match '(^|/)(\.git|bin|obj|node_modules|artifacts|release[^/]*)(/|$)') { continue }
     if ($relative -match '(^|/)(settings\.json|latest-launch\.log|skin\.png|selected\.png)$' -or $file.Extension -in @('.exe','.dll','.pdb','.pfx','.p12','.key','.pem','.snk')) { throw ('Private/build file in source tree: ' + $relative) }
     if ($file.Extension -in @('.jar','.zip') -and $relative -notin @('ThirdParty/authlib-injector-1.2.8.jar','ThirdParty/authlib-source-1.2.8.zip')) { throw ('Unexpected binary archive: ' + $relative) }
     if ($file.Extension -in @('.cs','.xaml','.csproj','.java','.md','.json','.yml','.yaml')) {

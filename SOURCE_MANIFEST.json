@@ -1,36 +1,96 @@
 {
   "project": "ORBIT",
-  "version": "0.7.1",
+  "version": "0.12.0",
   "entries": [
     {
-      "path": ".editorconfig",
-      "size": 255,
-      "sha256": "2f6d77f21ccb29448beb9e0a8c2feb3987e13fd318a99c3371e037dc12c53f3f"
-    },
-    {
       "path": ".gitattributes",
-      "size": 168,
-      "sha256": "0fe229471cd05bb8e9c44a574bd3dc9f98bbde1aa2314d240685ad595d6406e0"
+      "size": 86,
+      "sha256": "6da0f3dcf7dcb03df12865ed8400575ae93187aea098ea0e05f30c1112cd11fe"
     },
     {
-      "path": ".github/ISSUE_TEMPLATE/bug_report.yml",
-      "size": 843,
-      "sha256": "0d5f89a63b31701c38d95273e4303c2812fa2641e8de530604bdd2847c8e3bcc"
+      "path": ".github/workflows/release.yml",
+      "size": 4100,
+      "sha256": "913638bcfd812660550ad836c2e521e8f024f2c479b9dfa3cc09b3d00b077a24"
     },
     {
       "path": ".gitignore",
-      "size": 531,
-      "sha256": "f3ff443d409f2149386f561707769d5c9dc685bd5bddf55fd0cc02f0c3738d9e"
+      "size": 73,
+      "sha256": "5ba708cc1f9811a8d23e535cf2ab497524b4fcd7685726180f527bda32bcf713"
     },
     {
       "path": "App.xaml",
-      "size": 11147,
-      "sha256": "96be4a1ada088ab893a02e8fb62edd0b7365af6399715570a913f4873cd06edf"
+      "size": 20027,
+      "sha256": "e9902cb60edb6d59689d0a29b3649a52c9f083b828a4c89fadf149754ed99b72"
     },
     {
       "path": "App.xaml.cs",
-      "size": 4728,
-      "sha256": "e825528e02a23592c8c72c71890651cc843363fdb4ccd2d4fb7f8a30c5050b1d"
+      "size": 6160,
+      "sha256": "fd7d08f0b0de9ceb9dae263ff5218d3934e51d3ba6b465f6d768605328bcad4a"
+    },
+    {
+      "path": "Assets/Brawl/back.png",
+      "size": 15286,
+      "sha256": "ae31db60393c860e404cda7193c843fe027a1542202bf7ffbab90b774f342cb6"
+    },
+    {
+      "path": "Assets/Brawl/cheer.png",
+      "size": 15290,
+      "sha256": "9525a3a01eb4ffddbb1c6dd9444ffa20876d18843d7ddd44e6c80d28744e8714"
+    },
+    {
+      "path": "Assets/Brawl/dance.png",
+      "size": 15537,
+      "sha256": "9998567109c4ad007ad796091b4f1d7774779f6f96c8b4b615f215f7d74c5230"
+    },
+    {
+      "path": "Assets/Brawl/home.png",
+      "size": 15222,
+      "sha256": "1f6d39df47cb8849feb8f01aad329583f5f014c449c622b39aa154a3eca55160"
+    },
+    {
+      "path": "Assets/Brawl/library.png",
+      "size": 15242,
+      "sha256": "8afe8dea5bbc99f744482486a197983771afac1ef118aff0d9bd386d413a37c8"
+    },
+    {
+      "path": "Assets/Brawl/mods.png",
+      "size": 15325,
+      "sha256": "409ec081344f893b7103c98ec3aec00b1709a4ee74679e3da2b877d9fb0a2275"
+    },
+    {
+      "path": "Assets/Brawl/packs.png",
+      "size": 3869,
+      "sha256": "135cd0d16e68404a94531c093b7772bfeb4224d7d9793d803b017bcda69f85a7"
+    },
+    {
+      "path": "Assets/Brawl/settings.png",
+      "size": 16228,
+      "sha256": "50b313ffe97db1733e529d5b0f5ac91eed5c0c8ffee1034bbb7766508e4f720c"
+    },
+    {
+      "path": "Assets/Brawl/skins.png",
+      "size": 433,
+      "sha256": "62bdc1a13d432126f7d3cc82f0eb865fb274fc1d77c30c37670b28096a5ae08e"
+    },
+    {
+      "path": "Assets/Brawl/wave.png",
+      "size": 15663,
+      "sha256": "daa4f85635eff03529b9659afb27f774dca9eff0105026ee384446eeefa834b9"
+    },
+    {
+      "path": "Assets/Brawl/worlds.png",
+      "size": 5808,
+      "sha256": "8e30f8516fcae61347ac6fdc7a59be0426f68d685b6fa65d0fd29d45a8290f50"
+    },
+    {
+      "path": "Assets/Loaders/fabric.png",
+      "size": 5867,
+      "sha256": "a41878c3c4c5790cfc920eabf98d3404103a74a6f3df69d632ceb220c9ec9dc7"
+    },
+    {
+      "path": "Assets/Loaders/forge.png",
+      "size": 2473,
+      "sha256": "b6117db17335c86fa400865d098dc019fb83ed9c62136001e506cd5f822e2796"
     },
     {
       "path": "Assets/Orbit.png",
@@ -38,179 +98,534 @@
       "sha256": "43ab1cca137188808c688fc79582f07eafed210e6566a43a310d329ab0d41d30"
     },
     {
+      "path": "BrawlUI/build.mjs",
+      "size": 1047,
+      "sha256": "5f78281973eb65e8671d94ed6be87178b6e5e67776aae62f8fb09009b15e1801"
+    },
+    {
+      "path": "BrawlUI/dist/app.css",
+      "size": 147604,
+      "sha256": "4ef94d046531d1c1729814c57d41764c8f73446986a5ed269857113f8f60a215"
+    },
+    {
+      "path": "BrawlUI/dist/app.js",
+      "size": 943052,
+      "sha256": "786f8378416ada1a3afcd031bd64fc90dfe3fe2e7e3bd975077dfc5caf1dd1e7"
+    },
+    {
+      "path": "BrawlUI/dist/app.js.LEGAL.txt",
+      "size": 2760,
+      "sha256": "ed16d83066518db42f68d0ebec9e079a4a0bf7fa646b2a7f8ca4b85460d2700d"
+    },
+    {
+      "path": "BrawlUI/dist/fonts/Geist-Variable.woff2",
+      "size": 56800,
+      "sha256": "28258d0621216948416a859d32487ab6ad1c9effa0d08795698e70be3c917630"
+    },
+    {
+      "path": "BrawlUI/dist/fonts/Unbounded-latin.woff2",
+      "size": 50904,
+      "sha256": "22f9b928aa3928a896340422b54d690fbb5875c30eae4c106f029c61f2289fd6"
+    },
+    {
+      "path": "BrawlUI/dist/index.html",
+      "size": 495,
+      "sha256": "5c8520732d2f7d06bfae93ee99cc6ac18e840ef191a134cf8e58b0dff68b97ea"
+    },
+    {
+      "path": "BrawlUI/package-lock.json",
+      "size": 16757,
+      "sha256": "212eb8c8f4b8efd87097e72ab44f995e2d9d197ee97293174584c3595f506610"
+    },
+    {
+      "path": "BrawlUI/package.json",
+      "size": 422,
+      "sha256": "d685bfbe982fecbcc94e053df8d514b598364cb90ab40e502da50a17577c7525"
+    },
+    {
+      "path": "BrawlUI/public/fonts/Geist-Variable.woff2",
+      "size": 56800,
+      "sha256": "28258d0621216948416a859d32487ab6ad1c9effa0d08795698e70be3c917630"
+    },
+    {
+      "path": "BrawlUI/public/fonts/Unbounded-latin.woff2",
+      "size": 50904,
+      "sha256": "22f9b928aa3928a896340422b54d690fbb5875c30eae4c106f029c61f2289fd6"
+    },
+    {
+      "path": "BrawlUI/src/lib/deviceTier.ts",
+      "size": 233,
+      "sha256": "1e8c4ea61886ba9134e64ab0e01007cc9dee823209b31389916d1cde74443f07"
+    },
+    {
+      "path": "BrawlUI/src/main.tsx",
+      "size": 20442,
+      "sha256": "b8469eb8543c22bc4959ed488e54720341d37ab9a8cb5ba003de541bc5ad23c9"
+    },
+    {
+      "path": "BrawlUI/src/orbit.css",
+      "size": 9080,
+      "sha256": "26f851d8782b4c5087d5ad64b49f953eb1376bcdeacc69036f9e24b49bc75757"
+    },
+    {
+      "path": "BrawlUI/src/upstream/01-base.css",
+      "size": 1378,
+      "sha256": "3e93e0058b753f352c75e7a1bc850007bcd4b10c5463be7cf8f3cf140da5fb79"
+    },
+    {
+      "path": "BrawlUI/src/upstream/02-kit.css",
+      "size": 96476,
+      "sha256": "8567b9ab31414a26d9b7df0a15422d21540d0b8bc3baa5f1e5aa3d4dd0de0572"
+    },
+    {
+      "path": "BrawlUI/src/upstream/12-pixel.css",
+      "size": 37418,
+      "sha256": "72a2c2e5696914659acc571e3d390258a3579bd6c253fe7b6ce1698dedc9c17b"
+    },
+    {
+      "path": "BrawlUI/src/upstream/hubtile.css",
+      "size": 11832,
+      "sha256": "c9b62f0579bf6a57d171f65ee25441674d0db38d9f013f1382493a35e0027131"
+    },
+    {
+      "path": "BrawlUI/src/upstream/lobby.css",
+      "size": 42820,
+      "sha256": "b7a5015532df586027cc589bc56432838077e31e60c0a4e693806009ac0a0749"
+    },
+    {
+      "path": "BrawlUI/src/upstream/play.css",
+      "size": 4556,
+      "sha256": "1e27ba41aac0664dd7922e8424341ad6323c595a77666101e1234c417dddfcfb"
+    },
+    {
+      "path": "BrawlUI/src/upstream/stageArt.ts",
+      "size": 18414,
+      "sha256": "5da12bca9fa2cde28ac84caff0599f81bccb587479bf4b59ae330b6d0e6365fe"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/core/camera-framing.ts",
+      "size": 10636,
+      "sha256": "a37da2f1cd99a34354876b428e697febf04ffc404b388fb56458212e81b41355"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/core/pixel-particles.ts",
+      "size": 10512,
+      "sha256": "75e0455d8550bafecf014a6cedd110352d9fdf3c0bada783f5b27ab5034d2704"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/core/product-visuals.ts",
+      "size": 22272,
+      "sha256": "36dcd1afd21f0c066f799eb3d89b8ecb4acf692db4102b8c68f3a595db707ca6"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/core/scene-loop.ts",
+      "size": 93060,
+      "sha256": "b71abd630cd9fe662585a4bca120e1bb497406ff0252f280b29a4fd11a7ece13"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/core/skin-animations.ts",
+      "size": 27370,
+      "sha256": "772c15a4851c723c99d52acbd5e049e580aeb0138d4d12439906c6618960c89f"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/core/skin-image.ts",
+      "size": 1131,
+      "sha256": "534fbabe1af17d2e3328b90153bdaf79558336a3c06178a35a25ca9865c99506"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/core/skin-leg-stock.ts",
+      "size": 6582,
+      "sha256": "eecaccfb766ba500f8ab9ff39abe162ad1d5da12c5a92fed3529b8e2712645cc"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/core/skin-outer-voxel.ts",
+      "size": 15746,
+      "sha256": "ca2af6ba4aca52ea486bab2caaa78598f096bec8cf331750c16156e1576248b3"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/core/skin-texture.ts",
+      "size": 3454,
+      "sha256": "40dfa7c0a895e5787d5b2b04f9891a1630cd4bedd0d03b07504608aa0410bd43"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/core/skin-uv-inset.ts",
+      "size": 8517,
+      "sha256": "2c556b43bf0b32e60cfab50a8d5b2cca66368c8fa75e2de57f0a3dd84b644b18"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/core/studio-atmosphere.ts",
+      "size": 2914,
+      "sha256": "3275dac97c81b641e061959dd3d42a112b2cd2dc32d001670903174a796f5dce"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/core/studio-postfx.ts",
+      "size": 3224,
+      "sha256": "bbce9d29dda13ce4168890bf2d97c96ab94302465026ef7ac5fa02171e332afc"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/index.ts",
+      "size": 1499,
+      "sha256": "102ab3fbf33c2b68e301753b90613d1c46a739e6aa4406680fc4ce025fec2fd1"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/LICENSE",
+      "size": 1073,
+      "sha256": "90402cbfe0cb64ddb207ae21aca8d851137a48a6f99f5537f89725b09e059331"
+    },
+    {
+      "path": "BrawlUI/src/vendor/mine3d/types.ts",
+      "size": 5848,
+      "sha256": "aa102dca3776638d97eaca66587c2f3259b4099f52ba793f86c6eee4f2496913"
+    },
+    {
+      "path": "BrawlUI/UPSTREAM.md",
+      "size": 1003,
+      "sha256": "7bf5987535b0d87408e8bc7488ecf980d7bf69e3fbdf4f724060faf296df8ead"
+    },
+    {
       "path": "CHANGELOG.md",
-      "size": 1823,
-      "sha256": "87c86b17a25d3387a6d85160985b217d23c51648a8256cb732f6cc0e41b9f3a1"
+      "size": 8623,
+      "sha256": "ac5e641a0147718505ba36b7c8484da20010ff04b3d9320c932e56a35b2c766e"
     },
     {
       "path": "CONTRIBUTING.md",
-      "size": 1502,
-      "sha256": "107ba7fc71425f0b1bc89bbf0a528740fa56f517802b3d17e5e1b782250a6a64"
+      "size": 1491,
+      "sha256": "b0569ca59c6f918cfaf667b132fdfe6b9645d45f0f9b6dbaad5ae5ccf20efee4"
     },
     {
       "path": "Core/LaunchEngine.cs",
-      "size": 10489,
-      "sha256": "712fbf6d690c3d61b9666576afa0913cdc01959646c46b0bd1ce6bd12b156447"
+      "size": 11423,
+      "sha256": "731356cd9695e1960e51369410c371f163a6edbc452a666066a6ef237b231419"
     },
     {
       "path": "Core/Localization.cs",
-      "size": 695,
-      "sha256": "470cd872f07dc2ea0a66da7af78c585d66a69216a7f184f06c9a19ef84365944"
+      "size": 684,
+      "sha256": "1354e9f316e6b7fd427724c5ed6aeb834a491e5deb26a2d960fe9d681b60cf94"
     },
     {
       "path": "Core/LocalSkins.cs",
-      "size": 10255,
-      "sha256": "b644547f212fcc9e6b60015db4974627e7f319f8057d9bcc7deac5de0e769b25"
+      "size": 10218,
+      "sha256": "c992cb4c46b370e69b7cfd95932a2d1274a56346c494ba5549b65841c9479e0f"
+    },
+    {
+      "path": "Core/MicrosoftAccountStore.cs",
+      "size": 1514,
+      "sha256": "7fcb1c5f07dac1621c15a8b9888447bba812e3e66ef6ef1c1cf710d85071df45"
+    },
+    {
+      "path": "Core/MicrosoftSignIn.cs",
+      "size": 8983,
+      "sha256": "720891cdd0f873516b997c4000c0ffee09adf85b612a01e5fddb5a29f67e7e25"
     },
     {
       "path": "Core/Modpacks.cs",
-      "size": 16365,
-      "sha256": "cd548f4a19d6b4a8a3bc98e1feac01d246f35aa723fa6e35633b4c9d62f96cd4"
+      "size": 16388,
+      "sha256": "57e96db7ade94cbcc7cd2c3cfa8821d1c0df6da95cdb25a3e248a4dde9bdd286"
     },
     {
       "path": "Core/ModrinthClient.cs",
-      "size": 15510,
-      "sha256": "f90c7d5a1f697bffaf7a3123374a6f5368088a6e91f8828dab51dc55970e2037"
+      "size": 16276,
+      "sha256": "ac70faf71f7742e905488ecb8a04a2ffe7dacef6839069c82a603c2a38096131"
     },
     {
       "path": "Core/MojangInstaller.cs",
-      "size": 15292,
-      "sha256": "fd520f6610b725ffe5a6d7161fcab97a2a7fd2869ea3afb23e4dc75c1d34f406"
+      "size": 15219,
+      "sha256": "ee78cb568593ebf7b7e810e0ee242f1edf3e176605b18061e2ca6f0316273ac9"
     },
     {
       "path": "Core/Orbit.Core.csproj",
-      "size": 381,
-      "sha256": "f1f7671537092b8a575f2cdc80099c594725df78aae301f7037dfd93cbde2aeb"
+      "size": 575,
+      "sha256": "4432150ee17202954103a9e337e40c10bedaad1a4eef598118341fc3fb8256a5"
+    },
+    {
+      "path": "Core/PackExporter.cs",
+      "size": 4472,
+      "sha256": "550f2c690efb3d26b647eb312298192cf020a8adaa4d2a636324a56837da229d"
+    },
+    {
+      "path": "Core/QuickLoader.cs",
+      "size": 6556,
+      "sha256": "7e295e653232e8245ec645ac77ba7d64a932cf3628b267ce997508513d9f843d"
     },
     {
       "path": "Core/Settings.cs",
-      "size": 1699,
-      "sha256": "33702f6ba8fc7d0762e809eff3fd1cb64689ad1f6651a4ddc098e4ddd747b6b7"
+      "size": 1909,
+      "sha256": "8a3ca508ba12f4a7e2041414e0f901d49ca2311923c4aaa80fddfb8e42652538"
     },
     {
       "path": "Core/SkinPresets.cs",
-      "size": 1847,
-      "sha256": "eadc3ff47110b995a216bcb82f563101412c6fb3c8c195729973fd260bf89a3d"
+      "size": 1834,
+      "sha256": "33d4b450fd82da135e1f8788e114005abf62333746bc9c60438b566be934677a"
     },
     {
       "path": "Core/Translations.json",
-      "size": 25232,
-      "sha256": "b0e99f7e3e80ee13ac855b2cef90c9f4e5dfa09b1798b4903f17a3b33df588f8"
+      "size": 25390,
+      "sha256": "33c3bfdc951185e9e04a1d5f7ad93eff4cd03f6976b6a28048f0f89c06f47e22"
     },
     {
       "path": "Core/Versions.cs",
-      "size": 5116,
-      "sha256": "38589d3fc9e84f197e70aec9c53d9de33f5b1f173dc8aa5a8d69adad99a4deef"
+      "size": 5744,
+      "sha256": "d27531924462e07ba8b45aeb275baa936d88b4fb09306792ec14010d2c00a9a2"
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "size": 2934,
-      "sha256": "aa4fa455da2c66acfe5a649c6debd6efc91fe4c16609d80c6452c726b6b0a01f"
+      "size": 2911,
+      "sha256": "79b3347bcfb9fa821dca7b22867033a4ecd631571214d6bbecb7ed67ca0cdc25"
+    },
+    {
+      "path": "docs/brawl-screenshot.png",
+      "size": 572648,
+      "sha256": "f63e2543d147d0b4074cb63ab6cfe0d40fd6b7a46d951700c98d7f88b7e75ffa"
+    },
+    {
+      "path": "docs/brawl-settings.png",
+      "size": 407577,
+      "sha256": "d26a6f1f97276d59742b7d6af4f278e3153fc405eef4964120dc73ae979707c4"
     },
     {
       "path": "docs/BUILDING.md",
-      "size": 4297,
-      "sha256": "ab72b317afc04e092845b4940bbb17b393cb72278276b424854c9e2d6c7024ff"
+      "size": 5174,
+      "sha256": "cb09e0f6ded8c9588173eee68c168a499bc6ea7d7094552879f837bcff1987bd"
+    },
+    {
+      "path": "docs/default-library.png",
+      "size": 303626,
+      "sha256": "fe655337c43e66d302df38d2055c4426ed43637415c3f4144346f3a55da52f28"
+    },
+    {
+      "path": "docs/MICROSOFT-SETUP.md",
+      "size": 2131,
+      "sha256": "b5991baa259dcea6d644dd4eaf4ec5e71eff87505a09e233a699c12de3321ee3"
+    },
+    {
+      "path": "docs/old-theme-settings.png",
+      "size": 205016,
+      "sha256": "17c66019b109a96535e189bcdd3344afcef42d7012dcf32751f8db8d2459df14"
     },
     {
       "path": "docs/PUBLISHING.md",
-      "size": 2093,
-      "sha256": "d96f5aa6b62225e10907395bd5b7f80de2f6a6d0cb6d581fbe1049a1990697a8"
+      "size": 2083,
+      "sha256": "63fc0c302582bc5635cbf0180180e69f755a2d7aa520c7d2d029fd642cffa26a"
+    },
+    {
+      "path": "docs/quick-loader.png",
+      "size": 269505,
+      "sha256": "7949ea20c6d0518147b6a222a888918700fcb1c4dd9517cbc4a8d5c193057f0c"
+    },
+    {
+      "path": "docs/RELEASE-0.10.0.md",
+      "size": 1058,
+      "sha256": "c18716a0e57c1ae9aaceed4a88c61cdaf4bd4d7bd7e3167f4040cfb8aaf994f9"
+    },
+    {
+      "path": "docs/RELEASE-0.11.0.md",
+      "size": 972,
+      "sha256": "941f2a2a1c76b45476193a49cfa4dda8d7825806ed5f0fbbdc30c9a90eb06e79"
+    },
+    {
+      "path": "docs/RELEASE-0.12.0.md",
+      "size": 2335,
+      "sha256": "137eec40c7aabe62edd855b1b294c66919752171861dc6eb932cab08390f81ba"
+    },
+    {
+      "path": "docs/RELEASE-0.9.1.md",
+      "size": 1466,
+      "sha256": "118905bb070c65abddebb0b5cc9b813816767f9338ce7e30d168167d72d90432"
     },
     {
       "path": "docs/screenshot.png",
-      "size": 145975,
-      "sha256": "d8c5e03cf49c1c7a8a8d9fb4a6ce5badd6aa6312d3a88bacef476b5e7cbf7832"
+      "size": 117487,
+      "sha256": "9e75d13fefb581c137a73999326005c1adaf7b72938e682a2d3e7b54ac924a23"
     },
     {
       "path": "docs/VERIFICATION.md",
-      "size": 2094,
-      "sha256": "c3360e72dc6a0e5af67bafb0b11b5ff80b5f90ffac4bdb56821cf1b6c22507aa"
+      "size": 9930,
+      "sha256": "4d11ec2de12d31048d742f16b820cd24f3655d6a35ceb4ebcf2b2f04e0322695"
+    },
+    {
+      "path": "docs/xmcl-profile.png",
+      "size": 101078,
+      "sha256": "c487bd1f78a356b9496794a03f616f053649889ed3695fc130d6af73c483f912"
     },
     {
       "path": "global.json",
-      "size": 117,
-      "sha256": "12977d3e63d38bc51c22c4708ccbc351af024a310de7f25ac974468b731677b3"
+      "size": 110,
+      "sha256": "84aa96f48aa20d14456121b5ac5f18967f29f7da504c6f886218c701687f47fa"
     },
     {
       "path": "installer/ORBIT.iss",
-      "size": 2157,
-      "sha256": "67e9e1ff6f442d841437d9266b86911ecd297cee617cea842da85ef1c4aec532"
+      "size": 2098,
+      "sha256": "0767da4c168b7f89facc140b7928ab7f17ea5518f740f8624cf4fccacfca4017"
+    },
+    {
+      "path": "INSTALLER-SOURCE.md",
+      "size": 1300,
+      "sha256": "1017e45f46e350d255d7a78c38b541faeadecb551c53b8f65be3825520ff426f"
     },
     {
       "path": "LICENSE",
-      "size": 35823,
-      "sha256": "230184f60bae2feaf244f10a8bac053c8ff33a183bcc365b4d8b876d2b7f4809"
+      "size": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "LobbyAvatar.cs",
+      "size": 1390,
+      "sha256": "ec942a69a7d4044d3fb0f8f240faea4a041bae5af3504188485df109b4101644"
+    },
+    {
+      "path": "LobbyBackdrop.cs",
+      "size": 3309,
+      "sha256": "67f8e2941ea454ee1d0ced390689c5d160333b97085c37d10dc9f87060b7d3cb"
+    },
+    {
+      "path": "LobbyChrome.cs",
+      "size": 2996,
+      "sha256": "5c51051e10d49d3f5a98232f13562b017821e36f748c052d465ca309f627a437"
     },
     {
       "path": "Loc.cs",
-      "size": 5553,
-      "sha256": "195600c85a553b5e97c8fd7bc02409a718de34cd2f3cc371a2527905e4aab8b2"
+      "size": 5438,
+      "sha256": "941a3a00467b8d98a7df851d90ecb3ffb30ddc92c2ed00a0d3854c24a967bfe3"
+    },
+    {
+      "path": "MainWindow.AppearanceChecks.cs",
+      "size": 9255,
+      "sha256": "d5982be759ba6e48adce54e7f8029ffce98b98c7898f5919664b12c6998eb694"
+    },
+    {
+      "path": "MainWindow.Brawl.cs",
+      "size": 2866,
+      "sha256": "c1151b96a255fbb7ea35ff1e94c7345868edfa140553086f8c54719571beffae"
     },
     {
       "path": "MainWindow.Checks.cs",
-      "size": 10672,
-      "sha256": "41c859e24ea066eac330372638b5ffabb2e1f16ddd7a7bfa671587cb93b798a7"
+      "size": 10808,
+      "sha256": "29837d79d7e9e4f329f9de5396efbaa4192870176a03b8235d960fc37c8fb99e"
     },
     {
       "path": "MainWindow.Downloads.cs",
-      "size": 7237,
-      "sha256": "af525c91fd61cfeff21f7a3e6bbf3b241e4fc2929af499de138aa5bce5aa8554"
+      "size": 7704,
+      "sha256": "ec4fef7991a02111877bd558fd92fcf2435e4edb8dc5d6dad74ae3d14e520397"
+    },
+    {
+      "path": "MainWindow.Export.cs",
+      "size": 2460,
+      "sha256": "8a1309813cc263e6a6eb36477a2a39e4230477c8b2e93f3d0ad78b5d4de39b6b"
+    },
+    {
+      "path": "MainWindow.Microsoft.cs",
+      "size": 4901,
+      "sha256": "d7748b79c31063c2939718ca7836c21f841430fb873bf5cd7011146f8869d6eb"
+    },
+    {
+      "path": "MainWindow.Millida.cs",
+      "size": 15023,
+      "sha256": "571b17727394d81f8bab8e02049ed4986d0ad2260bb105768c84d5abde59fec0"
+    },
+    {
+      "path": "MainWindow.MillidaChecks.cs",
+      "size": 5803,
+      "sha256": "bdceb3bb05a5c1b343134d0d02fb0816a49c26b0dc9c64cafe920885a0212f42"
+    },
+    {
+      "path": "MainWindow.MinecraftIcons.cs",
+      "size": 715,
+      "sha256": "fcab857efac089cf941d17f206616c7460df4479c0fb89341b91c2a39d80d4b9"
     },
     {
       "path": "MainWindow.Mods.cs",
-      "size": 11693,
-      "sha256": "fc716c801a756c621056846965dbe74ac8e5454f211bab23065e5eed23e32d1d"
+      "size": 12555,
+      "sha256": "a33c65a68c810fe3903b7b1950718d9eb1d7245c4f24edb44b9cc22a50981170"
     },
     {
       "path": "MainWindow.Motion.cs",
-      "size": 3366,
-      "sha256": "f55910b8afa58fea07600517030b354cc5518dff482c0610b1e0a374f1fea8aa"
+      "size": 4940,
+      "sha256": "97485181f978f7a4c4fea641338a54c91f8ac2983a4dc2b6cfb7bde852485d62"
     },
     {
       "path": "MainWindow.PresetChecks.cs",
-      "size": 1649,
-      "sha256": "9f5a18b0070ba1fb67c497c4d8d208f546e7f67da6f191f40a7c4b66cb571040"
+      "size": 1634,
+      "sha256": "87a6f98ca4868849f1e96908e39f47597f1bbb22cac57ec8eb5b76efc3eead6c"
     },
     {
       "path": "MainWindow.Profile.cs",
-      "size": 1517,
-      "sha256": "67852c62916a97683489c4629f6c7ab4a4aa627b05b66f9850412f82a073f5ed"
+      "size": 1500,
+      "sha256": "2ee5da460a293c44e6710ce053774c6a76f6bea79571b8e3437656a5a4531558"
+    },
+    {
+      "path": "MainWindow.QuickLoader.cs",
+      "size": 3685,
+      "sha256": "5eef0d4ca9ba10c3b0b96359d15c39f5278b68d01595a2329f712f9ee26f23ec"
+    },
+    {
+      "path": "MainWindow.Refinement.cs",
+      "size": 3648,
+      "sha256": "d53f5148bfacdd58f579d61b7b1b42c2e81708afa7634cca029a4a0454db8502"
+    },
+    {
+      "path": "MainWindow.RefinementChecks.cs",
+      "size": 5258,
+      "sha256": "dfa8efe521e463903a406f979c20989eed4d8805290075754d68cb030f338574"
+    },
+    {
+      "path": "MainWindow.SkinRendererChecks.cs",
+      "size": 4115,
+      "sha256": "b47c43147577fe685ca8adc93a30be85bedc5c08bf4551b6e14a652e49b5d499"
     },
     {
       "path": "MainWindow.Skins.cs",
-      "size": 5045,
-      "sha256": "dc969c645a8eebd23b7eb8fdf230df2619f87e89c66a66edea8583a8ce7ba104"
+      "size": 5206,
+      "sha256": "638e4e676dc0f103608135cd30d410c074ff4dd0a4132e43effea667a4ad6530"
+    },
+    {
+      "path": "MainWindow.Themes.cs",
+      "size": 8837,
+      "sha256": "bca45858467b20fb6612c84c2564d1e2447b1f89569355ddc12c8a086ce72a6a"
     },
     {
       "path": "MainWindow.Upgrade.cs",
-      "size": 8936,
-      "sha256": "9abe6a18aebbe7f6756d48a1369214467fb16165f8e2e29c77f3b32afa235fd5"
+      "size": 9700,
+      "sha256": "2bac24a7a69792d48c15f64c7f102e27d6a3dceac8d0d2896e9b335bef6bbbae"
     },
     {
       "path": "MainWindow.UpgradeChecks.cs",
-      "size": 3500,
-      "sha256": "a56e4b99a89095b4dcb475a743149c8a70ff265e5509ca1140a1006b71d40284"
+      "size": 3475,
+      "sha256": "c13fd3b9e6fb80cc218097ec08f3070e25bce4d6a8ef01ef5b559315a44a9434"
     },
     {
       "path": "MainWindow.xaml",
-      "size": 34532,
-      "sha256": "422cae24e4ce871e54f380cc397b04637dff0a78df595ee7d51869b43c2a57a7"
+      "size": 52938,
+      "sha256": "bb90bf1d3c2b0c242c6f9d9f8381d62252661838e4c53eadc98555c84893f986"
     },
     {
       "path": "MainWindow.xaml.cs",
-      "size": 18440,
-      "sha256": "814183c2c30fa6350931ffbee84458ca498a1a41a11331851623070a53ef7cec"
+      "size": 20099,
+      "sha256": "16c9ddb9df0adb0b160910883261f5727799298616d8c886acbe77a353bd63b0"
+    },
+    {
+      "path": "MainWindow.Xmcl.cs",
+      "size": 7802,
+      "sha256": "c9e17f772cc8e681f3a46e869d31eb28527da9ba365a97e4bdb2504481040bfb"
+    },
+    {
+      "path": "MainWindow.XmclChecks.cs",
+      "size": 4805,
+      "sha256": "38d04f23c3ef5bb719b40362e9149e48196374b9f8b4bd777ca7b1b81cf47d56"
+    },
+    {
+      "path": "MinecraftItemIcons.cs",
+      "size": 4223,
+      "sha256": "aad506d288fc51465257650483903e06e4aa4108a9a749cfb0b0a7341358e45a"
     },
     {
       "path": "ModIcons.cs",
-      "size": 4620,
-      "sha256": "38fd92a9f16d08bada46c5888a53da9bc0d33f88e449017761989ac59a4adc58"
+      "size": 4585,
+      "sha256": "fb59e1cc57f564e97c032cfe5b9054cbd3af5d55ca92ae097fb3414a1a9e02fb"
     },
     {
       "path": "NOTICE.md",
-      "size": 2399,
-      "sha256": "0a4d96800e260db75b9069f231e363894d76d059195ccea1abba807666f207c7"
+      "size": 5830,
+      "sha256": "0efea8dcf5ddf995a6535343a99f3323495b648b37f139922ac9f085733dcfcd"
     },
     {
       "path": "orbit.ico",
@@ -219,48 +634,63 @@
     },
     {
       "path": "OrbitLauncher.csproj",
-      "size": 681,
-      "sha256": "b18dd243d31d59b0ada2ab51f0f83d752f48db7cada4a5adee842e7492302783"
+      "size": 943,
+      "sha256": "fbd0ab7d62641e472969830cb3213746685eec7489a13e50263a0e2cd17ed3fe"
     },
     {
       "path": "README.md",
-      "size": 5197,
-      "sha256": "cd8d8fc94049e88c27f03d24662d3a9f29bbe2daf31ecc1cfa39bf7b980e9e05"
+      "size": 9626,
+      "sha256": "c9359c45d139854b3ac5c95b8e080609f5c2bdc37e2c864ffb4dc944be128efb"
     },
     {
       "path": "scripts/build-installer.ps1",
-      "size": 2472,
-      "sha256": "41bc05ae7f96cf0abd2a86bd78ea6408bbb38b0cb2d4bacc7bfb9bfb6382f674"
+      "size": 2429,
+      "sha256": "2fc762dc2f6ff8cfa42c42e3227a401c8aa2761ae93246beac7d6a6f72c78291"
     },
     {
       "path": "scripts/build.ps1",
-      "size": 1513,
-      "sha256": "7b63e6f04a2b2bbfce1d149037fd8d8179162af4d173d544f524b2f25120d592"
+      "size": 1512,
+      "sha256": "de27b76925ae11121c934eaf991702fad18ca9b7b0654ab8fb053436ee86922e"
+    },
+    {
+      "path": "scripts/package-source.py",
+      "size": 2343,
+      "sha256": "cade3dae046a355a2ecf63e43571ac47943cba216bd4e22d83ae48348deb3fcb"
     },
     {
       "path": "scripts/verify-source.ps1",
-      "size": 2210,
-      "sha256": "2b49208fb1dc535c4767afc071db6cdc3391ed92f24b7e5d705e5d51071f11d2"
+      "size": 2222,
+      "sha256": "3471aee43246d250403bb2ab8097fbb73141c26672d8ecbd31e5637ba4f02722"
     },
     {
       "path": "ScrollViewportConverter.cs",
-      "size": 627,
-      "sha256": "9217498310a6ab4ab06b1682f7def7ded4c15bc142cf9d8e9c0bfdf52c6b3d97"
+      "size": 617,
+      "sha256": "7839aaed1fd9236317dc4adf89d3abda674a630ace2d1a7829b2ddded88d91fc"
     },
     {
       "path": "SkinPresetThumbnail.cs",
-      "size": 2073,
-      "sha256": "404e1aae2cbb33d0adacfa075ea5f232b687a5b2bfb2bce1c843193018ec3ad0"
+      "size": 2212,
+      "sha256": "3dea9bcc802ea55e5fa56366a85fcaa0e280e97b20414d33f910366e744247da"
     },
     {
       "path": "SkinPreview.cs",
-      "size": 4170,
-      "sha256": "137e28f5dcb80b73d4da6595730ef9fcb76f6cfc00e97e306d8604d02071d68c"
+      "size": 8947,
+      "sha256": "8253227e2ca5e4074a68721eef551e05e357e175b11ed0035e21d012a0ca52c0"
+    },
+    {
+      "path": "SkinTextures.cs",
+      "size": 1108,
+      "sha256": "f778fc6d7ed5bce64da0ff4a90a93ab6a9e461beb7bbf0d3a41a8bfd20d5e3e6"
     },
     {
       "path": "Tests/ClasspathChecks.cs",
-      "size": 1637,
-      "sha256": "470137d4a1895225f6e67c8aaaa303513d28477c0dc8497554fe864f4e73534c"
+      "size": 1630,
+      "sha256": "af779354a14bd81ff509d68e60cde32d0c0086a98fa22ccf189d3ab22b818710"
+    },
+    {
+      "path": "Tests/ExportChecks.cs",
+      "size": 4021,
+      "sha256": "98a550289ff1172dffa687cad6b146a33390a4f8b5d18b15a6358e5c04a1d84c"
     },
     {
       "path": "Tests/Fixtures/OrbitClasspathProbe.java",
@@ -279,18 +709,28 @@
     },
     {
       "path": "Tests/InstallerChecks.cs",
-      "size": 5446,
-      "sha256": "9557e27ff79e10d912311d7d53d4172649443af4d601a94b6dc34188d01f1971"
+      "size": 5425,
+      "sha256": "d94c3b695355a96f5c9f69ed148ef628a428b3fb06d9fcd16db5ab48b4a65b94"
+    },
+    {
+      "path": "Tests/InstanceChecks.cs",
+      "size": 1385,
+      "sha256": "581c37095054aa461b3140feb115af94ee93c8aa83fccf533f257808c04b76d1"
     },
     {
       "path": "Tests/LoaderChecks.cs",
-      "size": 1683,
-      "sha256": "d0aae90d2c376737aaedf103f050c3b0c545626e0ce8763684a962b37c6ec026"
+      "size": 1674,
+      "sha256": "ceccc975414fd881974cd750aa9e4dc394ea8587b95604b978aad71dfb8c79b3"
+    },
+    {
+      "path": "Tests/MicrosoftChecks.cs",
+      "size": 5430,
+      "sha256": "b4c7d3528cdfe6886ce4ac604fb710e97c08389e1fb39a1cee60c166f625b220"
     },
     {
       "path": "Tests/ModrinthChecks.cs",
-      "size": 4275,
-      "sha256": "090ac0cd270dfe6a6aadebe6461493095018a330798b2de09e28731c18dc67aa"
+      "size": 4274,
+      "sha256": "0e0ee171f2e90c9b3499ec5b3c82616b69310aaa0cf75d9538fc0cfa5c6d6281"
     },
     {
       "path": "Tests/Orbit.Tests.csproj",
@@ -299,28 +739,33 @@
     },
     {
       "path": "Tests/Program.cs",
-      "size": 5863,
-      "sha256": "6341dc56621db4999920747319d71d928da9e79eca5aa25c2a2129e4fef02971"
+      "size": 6311,
+      "sha256": "3d3a7e02fd08ddee2ff900daf90a45748708cf1c22f8fa2c490512a3739c51b7"
+    },
+    {
+      "path": "Tests/QuickLoaderChecks.cs",
+      "size": 6411,
+      "sha256": "6560411c3d335b419496efd7a29ae612a27d57229ddb79dc00ef359db5e14528"
     },
     {
       "path": "Tests/ResourcePackChecks.cs",
-      "size": 1800,
-      "sha256": "8b63e740548edf474c648c9124a5970f84f3a39ccf3e0984b3f7162e41f02954"
+      "size": 1799,
+      "sha256": "547018442676b23cdaab723e41c4635254ba6f0fd891b8ce28b7b77eb46b4fd2"
     },
     {
       "path": "Tests/ShaderChecks.cs",
-      "size": 1764,
-      "sha256": "7802ee20de3653de7123847959db68cc6337f5ee8b105861cd0b002d0659db33"
+      "size": 1763,
+      "sha256": "bf5ab3cbb10fe968f1fceb80c913d423a23c245e75c4bcea4c0c89b2cbd0ab73"
     },
     {
       "path": "Tests/SkinChecks.cs",
-      "size": 3334,
-      "sha256": "47d2dd0d4f034fa1aeb24370c2d9d45335ea76706d7194eeb1f8e11244175af3"
+      "size": 3320,
+      "sha256": "59762d9b70ea2d25dd2c77d202f4bfc1ec31916763bbe80d68b9fd8b2302b565"
     },
     {
       "path": "Tests/UpgradeChecks.cs",
-      "size": 7766,
-      "sha256": "fa9434fd088663e3e1adb9335c13558768f82654ba94a87e0452a25977858438"
+      "size": 7735,
+      "sha256": "151771a1b347b2673140b660a2d04127d669beadadd2c5796c83d34bddb677a8"
     },
     {
       "path": "ThirdParty/AGPLv3-with-authlib-injector-exception.txt",
@@ -344,38 +789,173 @@
     },
     {
       "path": "ThirdParty/DOTNET-LICENSE.txt",
-      "size": 1139,
-      "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b"
+      "size": 1116,
+      "sha256": "cfc21f5e8bd655ae997eec916138b707b1d290b83272c02a95c9f821b8c87310"
     },
     {
       "path": "ThirdParty/DOTNET-THIRD-PARTY-NOTICES.txt",
-      "size": 68910,
-      "sha256": "b60b2912da28eaa6518593c9e2efb5334ee062d3c42e80d8fdfa806b3dc52977"
+      "size": 67638,
+      "sha256": "97c1a7b3da6a4c6ad516448719f45114b41a4d4c5aa300a944476e2e4f5da438"
+    },
+    {
+      "path": "ThirdParty/Fabric-Website-LICENSE.txt",
+      "size": 1069,
+      "sha256": "530ce2ccdd335bdf78e2b113bce6793e2c1833ac9467ee02073c380782361145"
+    },
+    {
+      "path": "ThirdParty/Forge-Installer-LICENSE.txt",
+      "size": 26526,
+      "sha256": "20c17d8b8c48a600800dfd14f95d5cb9ff47066a9641ddeab48dc54aec96e331"
+    },
+    {
+      "path": "ThirdParty/Kenney-Game-Icons.txt",
+      "size": 468,
+      "sha256": "5d57a5e5fa1c14d5002f5735cd46cd3285b559500b648cdf137bdc4c3dec6053"
+    },
+    {
+      "path": "ThirdParty/Kenney-Isometric-Blocks.txt",
+      "size": 468,
+      "sha256": "fd8f2348d75b56e8f48c8cc9407a7d872a0b32f786c7ac10339f9c575d601e79"
+    },
+    {
+      "path": "ThirdParty/Kenney-Voxel-Pack.txt",
+      "size": 600,
+      "sha256": "41156e56a15d2682987a4d9ba056322daf7f73de3756ab9647e5c619a8f2c8a0"
+    },
+    {
+      "path": "ThirdParty/Millida-fonts-OFL.txt",
+      "size": 4677,
+      "sha256": "7e8de9c9582271794fcd1325784b91f2a8eb2ed75e1f2d4f43841963adff7d48"
+    },
+    {
+      "path": "ThirdParty/Millida-GPL-3.0.txt",
+      "size": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "ThirdParty/Millida-NOTICE.txt",
+      "size": 1173,
+      "sha256": "609f89d923bbd2a0ea1c35d3e94e1bf535f9e6168c84a55363ec7872d15f93df"
+    },
+    {
+      "path": "ThirdParty/Millida-THIRD-PARTY.md",
+      "size": 26497,
+      "sha256": "ea429b3486bdcff847acee6992e448039154dd861c289e0863189ab1ae478518"
+    },
+    {
+      "path": "ThirdParty/Millida-TRADEMARK.md",
+      "size": 6302,
+      "sha256": "1e7b2ac94b3f9f945e9af85270c3d47b16a6039ac4642acb0b8ee60f03b55e77"
+    },
+    {
+      "path": "ThirdParty/Mine3D-MIT.txt",
+      "size": 1073,
+      "sha256": "90402cbfe0cb64ddb207ae21aca8d851137a48a6f99f5537f89725b09e059331"
     },
     {
       "path": "ThirdParty/NOTICE.txt",
-      "size": 396,
-      "sha256": "938be46ffd3447d3e96943cfe4c82592abe04922c59c869e37b6b16947d0efd8"
+      "size": 392,
+      "sha256": "d105c995a6fd42288d2f68858b3af4ec1958d44dbf8821568123b24f39cb4ed7"
+    },
+    {
+      "path": "ThirdParty/React-LICENSE.txt",
+      "size": 1088,
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+    },
+    {
+      "path": "ThirdParty/ReactDOM-LICENSE.txt",
+      "size": 1088,
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+    },
+    {
+      "path": "ThirdParty/ReactScheduler-LICENSE.txt",
+      "size": 1088,
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
     },
     {
       "path": "ThirdParty/SkiaSharp-LICENSE.txt",
-      "size": 1129,
-      "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+      "size": 1110,
+      "sha256": "bc2eb4f37d574f9b1b67da2b17e14d151618850527d78f7323239e7518df5b77"
     },
     {
       "path": "ThirdParty/SkiaSharp-Windows-LICENSE.txt",
-      "size": 1129,
-      "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+      "size": 1110,
+      "sha256": "bc2eb4f37d574f9b1b67da2b17e14d151618850527d78f7323239e7518df5b77"
     },
     {
       "path": "ThirdParty/SkiaSharp-Windows-THIRD-PARTY-NOTICES.txt",
-      "size": 139775,
-      "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
+      "size": 137059,
+      "sha256": "98acf9d4d6083959988c884f630cdff760f94bfeb9acf57774653e08c23d1e45"
+    },
+    {
+      "path": "ThirdParty/Skin3D-LICENSE.txt",
+      "size": 1100,
+      "sha256": "d3bb7220c939863b084acc997e9ec82f1681d45eb243755246256e9b551a2029"
+    },
+    {
+      "path": "ThirdParty/SkinviewUtils-LICENSE.txt",
+      "size": 1140,
+      "sha256": "7eb7128de2e4de70932ce370c2c602136b4d7648fce9fc4a50c93fc59be94d94"
+    },
+    {
+      "path": "ThirdParty/ThreeJS-LICENSE.txt",
+      "size": 1081,
+      "sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"
+    },
+    {
+      "path": "ThirdParty/WebView2-LICENSE.txt",
+      "size": 1487,
+      "sha256": "0af8f1b807512aae39c2ac1aa4d0cae65cabecb6fd554b8439a5162a0d6eca55"
     },
     {
       "path": "ThirdParty/WPF-LICENSE.txt",
-      "size": 1093,
-      "sha256": "1661d4fc559e13b2203f1e87accc822c117ab345e4df3376fb0e03eaca24c585"
+      "size": 1072,
+      "sha256": "c2826332aa47ecb6fc4c40a5b6163623b2f2ddbbfa8bd3a25a626ea7a25d218e"
+    },
+    {
+      "path": "ThirdParty/XMCL-MIT.txt",
+      "size": 1082,
+      "sha256": "72e17fb1c83deda594cf7c6bf61b45ee31880b86e2d526e9a4b16d2d8b3fc7fa"
+    },
+    {
+      "path": "ThirdParty/XMCL-reference/AppBackground.vue",
+      "size": 3656,
+      "sha256": "c21263ec7d3335ac04b38a3390285edd58d93d7e68e546e23a541a0d487c856d"
+    },
+    {
+      "path": "ThirdParty/XMCL-reference/AppSideBarClassic.vue",
+      "size": 11350,
+      "sha256": "6902ac20972e0e5080a3e0f862b46f44fe04b8332b42ca7035ae174405f83e6e"
+    },
+    {
+      "path": "ThirdParty/XMCL-reference/HomeHeader.vue",
+      "size": 5304,
+      "sha256": "c53b5b5541579a1f4328ee8e256f0955fae5084aaff346ddef808c087da7c9a2"
+    },
+    {
+      "path": "ThirdParty/XMCL-reference/README.md",
+      "size": 690,
+      "sha256": "cae76bcf7400d5d55bd562e968d7250f5d32d70b936a5934c7cc3115a94b684b"
+    },
+    {
+      "path": "ThirdParty/XMCL-reference/UserProfileDialog.vue",
+      "size": 2460,
+      "sha256": "a8d8cb97535523c1e0221e5cc264606ff66df646a9870d1a523b61ff6d15cb63"
+    },
+    {
+      "path": "VersionVisualConverter.cs",
+      "size": 1555,
+      "sha256": "6ab3112ebe9dfc5407c70a5dfa7af027427d797f883fc6decb1a96ad312d42d6"
+    },
+    {
+      "path": "XmclTheme.xaml",
+      "size": 4918,
+      "sha256": "ff7c448165296bbe8cd4fc842ff426974844d368f6a1fc9a7c50860bb400beb7"
+    },
+    {
+      "path": "XmclTheme.xaml.cs",
+      "size": 747,
+      "sha256": "bcd7e6593fb2492333636f8d2e7af335fba86700eddc23ea53e7566f0a3b1d72"
     }
   ]
 }

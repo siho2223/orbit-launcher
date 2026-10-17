@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using Orbit.Core;
 namespace OrbitLauncher;
 public static class Loc {

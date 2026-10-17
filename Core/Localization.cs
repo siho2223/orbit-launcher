@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 namespace Orbit.Core;
 public static class Localization {
  public static string Language {get;set;}="en";

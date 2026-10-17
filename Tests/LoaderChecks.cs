@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Nodes;
+using System.Text.Json.Nodes;
 using Orbit.Core;
 static class LoaderChecks {
  public static int Run(string root,string minecraft){try{RunAsync(root,minecraft).GetAwaiter().GetResult();return 0;}catch(Exception ex){Console.Error.WriteLine(ex);return 1;}}

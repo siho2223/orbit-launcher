@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 namespace Orbit.Core;
 public sealed class LauncherSettings {
  public string GameRoot {get;set;}=DefaultRoot(); public string Nickname {get;set;}="Player";
@@ -6,10 +6,13 @@ public sealed class LauncherSettings {
  public bool SkinEnabled {get;set;} public string SkinModel {get;set;}="classic";
  public int MemoryMb {get;set;}=4096; public bool ReduceMotion {get;set;} public bool Isolated {get;set;}=true;
  public string Language {get;set;}="en";
+ public int ThemeRevision {get;set;}
+ public string Theme {get;set;}="brawl stars"; public string ThemePalette {get;set;}="purple";
  public int GameWidth {get;set;}=1280; public int GameHeight {get;set;}=720;
  public bool Fullscreen {get;set;} public bool MinimizeOnLaunch {get;set;}
  public bool RememberWindow {get;set;}=true; public bool ScrollLog {get;set;}=true;
  public double WindowWidth {get;set;}=1320; public double WindowHeight {get;set;}=880;
+ public string AccountKind {get;set;}="offline";public string OfflineNickname {get;set;}="Player";
  public string ActiveSkinPreset {get;set;}="";
  public static string DataRoot=>Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"OrbitLauncher");
  public static string DefaultRoot()=>Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),".minecraft");
