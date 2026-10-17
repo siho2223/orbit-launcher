@@ -1,6 +1,6 @@
 {
   "project": "ORBIT",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "entries": [
     {
       "path": ".gitattributes",
@@ -9,8 +9,8 @@
     },
     {
       "path": ".github/workflows/release.yml",
-      "size": 4100,
-      "sha256": "913638bcfd812660550ad836c2e521e8f024f2c479b9dfa3cc09b3d00b077a24"
+      "size": 3989,
+      "sha256": "8f986c4d1381b3c116937095df4ad78a88540736037da628b3deb7eacf3cdd76"
     },
     {
       "path": ".gitignore",
@@ -109,8 +109,8 @@
     },
     {
       "path": "BrawlUI/dist/app.js",
-      "size": 943052,
-      "sha256": "786f8378416ada1a3afcd031bd64fc90dfe3fe2e7e3bd975077dfc5caf1dd1e7"
+      "size": 943732,
+      "sha256": "0ccb983bc84d37236319da8dcbf6ed1eeaec0628bf2bfb15ec5e51c6ee4ed003"
     },
     {
       "path": "BrawlUI/dist/app.js.LEGAL.txt",
@@ -135,12 +135,12 @@
     {
       "path": "BrawlUI/package-lock.json",
       "size": 16757,
-      "sha256": "212eb8c8f4b8efd87097e72ab44f995e2d9d197ee97293174584c3595f506610"
+      "sha256": "b79a4697361073441f0a5d1f570ba7970c4458de5c3adbf822c93708fa10f3e2"
     },
     {
       "path": "BrawlUI/package.json",
       "size": 422,
-      "sha256": "d685bfbe982fecbcc94e053df8d514b598364cb90ab40e502da50a17577c7525"
+      "sha256": "374087b2d9eaca56d17a80e81b371da4af76c12eb93888d8b71d80c4d7398005"
     },
     {
       "path": "BrawlUI/public/fonts/Geist-Variable.woff2",
@@ -159,8 +159,8 @@
     },
     {
       "path": "BrawlUI/src/main.tsx",
-      "size": 20442,
-      "sha256": "b8469eb8543c22bc4959ed488e54720341d37ab9a8cb5ba003de541bc5ad23c9"
+      "size": 21212,
+      "sha256": "e920cd8c8f377e422f975fd600649f538013c1ca7375f5c34ae261ae49144a97"
     },
     {
       "path": "BrawlUI/src/orbit.css",
@@ -344,8 +344,8 @@
     },
     {
       "path": "Core/QuickLoader.cs",
-      "size": 6556,
-      "sha256": "7e295e653232e8245ec645ac77ba7d64a932cf3628b267ce997508513d9f843d"
+      "size": 7973,
+      "sha256": "841ab32344d7db269eec203012d57f5b510ec956be7de34d3df0880a89eb23b8"
     },
     {
       "path": "Core/Settings.cs",
@@ -359,8 +359,8 @@
     },
     {
       "path": "Core/Translations.json",
-      "size": 25390,
-      "sha256": "33c3bfdc951185e9e04a1d5f7ad93eff4cd03f6976b6a28048f0f89c06f47e22"
+      "size": 25660,
+      "sha256": "d5ac2fc7076733354f745d1db7f723a54eceb7782a6332c8100df4d2d767cf77"
     },
     {
       "path": "Core/Versions.cs",
@@ -428,6 +428,11 @@
       "sha256": "137eec40c7aabe62edd855b1b294c66919752171861dc6eb932cab08390f81ba"
     },
     {
+      "path": "docs/RELEASE-0.12.1.md",
+      "size": 1360,
+      "sha256": "95e9fb3270b0137ccc9ab453d859d2943d524a9f99b64d7dd267d43f58e89ad3"
+    },
+    {
       "path": "docs/RELEASE-0.9.1.md",
       "size": 1466,
       "sha256": "118905bb070c65abddebb0b5cc9b813816767f9338ce7e30d168167d72d90432"
@@ -455,7 +460,7 @@
     {
       "path": "installer/ORBIT.iss",
       "size": 2098,
-      "sha256": "0767da4c168b7f89facc140b7928ab7f17ea5518f740f8624cf4fccacfca4017"
+      "sha256": "031720267bd0c05bdb2fc6342b4da2b59e38669861671706157d0b9937169818"
     },
     {
       "path": "INSTALLER-SOURCE.md",
@@ -519,8 +524,8 @@
     },
     {
       "path": "MainWindow.Millida.cs",
-      "size": 15023,
-      "sha256": "571b17727394d81f8bab8e02049ed4986d0ad2260bb105768c84d5abde59fec0"
+      "size": 15191,
+      "sha256": "760e2d5f69f22958fd28a7d24bb59311248a93088bf06b6537939fef9adec12c"
     },
     {
       "path": "MainWindow.MillidaChecks.cs",
@@ -554,8 +559,13 @@
     },
     {
       "path": "MainWindow.QuickLoader.cs",
-      "size": 3685,
-      "sha256": "5eef0d4ca9ba10c3b0b96359d15c39f5278b68d01595a2329f712f9ee26f23ec"
+      "size": 5008,
+      "sha256": "530b5bab2accaae1fe924ce09bd15c76972f5a022496be867dd3da9ee7d17510"
+    },
+    {
+      "path": "MainWindow.QuickLoaderChecks.cs",
+      "size": 2627,
+      "sha256": "9c61c9b050aac34e31b6677ede0464de58e1a6b47aabbb1a560b68d57070ea89"
     },
     {
       "path": "MainWindow.Refinement.cs",
@@ -599,8 +609,8 @@
     },
     {
       "path": "MainWindow.xaml.cs",
-      "size": 20099,
-      "sha256": "16c9ddb9df0adb0b160910883261f5727799298616d8c886acbe77a353bd63b0"
+      "size": 20201,
+      "sha256": "906c7536c8c6125354b402a7b188c67c9458d4f8c5409bb7576dd33771b1e2fd"
     },
     {
       "path": "MainWindow.Xmcl.cs",
@@ -635,12 +645,12 @@
     {
       "path": "OrbitLauncher.csproj",
       "size": 943,
-      "sha256": "fbd0ab7d62641e472969830cb3213746685eec7489a13e50263a0e2cd17ed3fe"
+      "sha256": "7ff74c7a74f872ebe0e41920dd7e81390b5a10c9f0e4ab0a69a04b8ff48a005c"
     },
     {
       "path": "README.md",
-      "size": 9626,
-      "sha256": "c9359c45d139854b3ac5c95b8e080609f5c2bdc37e2c864ffb4dc944be128efb"
+      "size": 9524,
+      "sha256": "8546b90e98a1eb145acdb974a5aac3ca4b25b5eded81c9f997589368e2c805fe"
     },
     {
       "path": "scripts/build-installer.ps1",
@@ -744,8 +754,8 @@
     },
     {
       "path": "Tests/QuickLoaderChecks.cs",
-      "size": 6411,
-      "sha256": "6560411c3d335b419496efd7a29ae612a27d57229ddb79dc00ef359db5e14528"
+      "size": 7018,
+      "sha256": "d845f58320356e678359af463c5c6bfcdcab0afbfacabfab11a1b039b4e866f2"
     },
     {
       "path": "Tests/ResourcePackChecks.cs",

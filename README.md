@@ -1,6 +1,6 @@
 # ORBIT Launcher
 
-Minecraft Java launcher for Windows · **0.12.0 / preview**
+Minecraft Java launcher for Windows · **0.12.1 / preview**
 
 ORBIT is an independent C# / WPF launcher for .NET 8, built with assistance from OpenAI Codex.
 

@@ -72,7 +72,7 @@ jobs:
           $setup = 'artifacts/installer/ORBIT-Setup-'+$version+'-Windows-x64.exe'
           $source = 'artifacts/delivery/ORBIT-'+$version+'-source.zip'
           $installerSource = 'artifacts/delivery/ORBIT-'+$version+'-installer-source.zip'
-          gh release create $tag --target $env:GITHUB_SHA --draft --prerelease --title ('ORBIT '+$version+' — Default, Forge & Fabric') --notes-file ('docs/RELEASE-'+$version+'.md')
+          gh release create $tag --target $env:GITHUB_SHA --draft --prerelease --title ('ORBIT '+$version) --notes-file ('docs/RELEASE-'+$version+'.md')
           if ($LASTEXITCODE -ne 0) { throw 'Release creation failed' }
           gh release upload $tag $setup ($setup+'.sha256') $source ($source+'.sha256') $installerSource ($installerSource+'.sha256')
           if ($LASTEXITCODE -ne 0) { throw 'Asset upload failed; release kept as draft' }

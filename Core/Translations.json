@@ -315,5 +315,7 @@
   "Не удалось проверить установленную Java.": "Could not verify the installed Java runtime.",
   "Modrinth не ответил вовремя. Повтори поиск.": "Modrinth timed out. Please retry the search.",
   "Все версии Minecraft · просмотр каталога": "All Minecraft versions · browsing catalog",
-  "Выбери версию игры в нижней панели для совместимости и установки дополнений.": "Select a game version below to filter compatible projects and install add-ons."
+  "Выбери версию игры в нижней панели для совместимости и установки дополнений.": "Select a game version below to filter compatible projects and install add-ons.",
+  "Не удалось получить данные загрузчика": "Could not retrieve loader metadata",
+  "Загрузчик недоступен для выбранной версии Minecraft": "Loader is not available for the selected Minecraft version"
 }
