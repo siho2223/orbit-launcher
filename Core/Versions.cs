@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 namespace Orbit.Core;
-public sealed record VersionEntry(string Id,string Loader,string BaseVersion,int JavaMajor){public string? RootOverride{get;init;} public string? DisplayName{get;init;} public bool Installed{get;init;}=true;public RemoteVersion? Remote{get;init;}public string StateLabel=>Installed?Localization.T("УСТАНОВЛЕНО"):Localization.T("↓  СКАЧАТЬ");public string Title=>DisplayName??Id;public string Subtitle=>Installed?$"{Loader}  ·  Java {JavaMajor}":Localization.T($"Mojang  ·  {(Remote?.Type=="release"?"Релиз":"Снапшот")}  ·  {Remote?.Released:dd.MM.yyyy}");public string VisualKind=>Loader=="Forge"?"forge":Loader=="Fabric"?"fabric":Installed?"installed":"available";
+public sealed record VersionEntry(string Id,string Loader,string BaseVersion,int JavaMajor){public string? RootOverride{get;init;} public string? DisplayName{get;init;} public bool Installed{get;init;}=true;public RemoteVersion? Remote{get;init;}public string StateLabel=>Installed?Localization.T("УСТАНОВЛЕНО"):Localization.T("↓  СКАЧАТЬ");public string Title=>DisplayName??Id;public string Subtitle=>Installed?$"{Loader}  ·  Java {JavaMajor}":Loader is "Forge" or "Fabric"?$"{Loader} · {BaseVersion}":Localization.T($"Mojang  ·  {(Remote?.Type=="release"?"Релиз":"Снапшот")}  ·  {Remote?.Released:dd.MM.yyyy}");public string VisualKind=>Loader=="Forge"?"forge":Loader=="Fabric"?"fabric":Installed?"installed":"available";
  public string TileColor=>VisualKind switch{"forge"=>"#A9B3BF","fabric"=>"#BF8D56","installed"=>"#28784C",_=>"#30323E"};
  public string TileForeground=>VisualKind is "forge" or "fabric"?"#131820":"#FFFFFF";
  public string RailLabel=>$"{BaseVersion} · {Loader}";

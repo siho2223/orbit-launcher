@@ -1,0 +1,10 @@
+using System.Text.Json.Nodes;
+using Orbit.Core;
+static class VanillaMetadataChecks {
+ public static int Run(){int checks=0;void Check(bool ok,string name){if(!ok)throw new Exception(name);Console.WriteLine("PASS "+name);checks++;}
+ try{var official=JsonNode.Parse("""{"id":"1.21.1","mainClass":"net.minecraft.client.main.Main","downloads":{"client":{"sha1":"client-sha"}},"libraries":[{"name":"a:b:1"}],"arguments":{"game":["--username","${auth_player_name}"]},"assetIndex":{"id":"17","sha1":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","url":"https://piston-meta.mojang.com/v1/packages/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/17.json"}}""")!.AsObject();var existing=(JsonObject)official.DeepClone();existing["assetIndex"]!["sha1"]=new string('b',40);existing["assetIndex"]!["url"]="https://piston-meta.mojang.com/v1/packages/"+new string('b',40)+"/17.json";Check(MojangInstaller.CanReuseVanillaMetadata(existing,official),"Older official asset index is reusable for the same vanilla client");Check(MojangInstaller.CanReuseVanillaMetadata(JsonNode.Parse(existing.ToJsonString(new(){WriteIndented=true}))!.AsObject(),official),"JSON formatting does not invalidate installed vanilla metadata");
+ foreach(string field in new[]{"id","mainClass","libraries","arguments","downloads"}){var modified=(JsonObject)existing.DeepClone();modified[field]="custom";Check(!MojangInstaller.CanReuseVanillaMetadata(modified,official),"Custom "+field+" cannot be overwritten by vanilla installation");}
+ foreach(string field in new[]{"url","sha1","id"}){var modified=(JsonObject)existing.DeepClone();modified["assetIndex"]![field]=field=="url"?"https://example.invalid/index.json":field=="sha1"?"not-a-hash":"../outside";Check(!MojangInstaller.CanReuseVanillaMetadata(modified,official),"Invalid existing asset index "+field+" is rejected");}Check(!MojangInstaller.CanReuseVanillaMetadata(new JsonObject(),new JsonObject()),"Empty metadata cannot be reused");Console.WriteLine("PASS "+checks+" installed metadata regression checks");return 0;
+ }catch(Exception e){Console.Error.WriteLine(e);return 1;}
+ }
+}

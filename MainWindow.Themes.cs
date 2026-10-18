@@ -19,6 +19,7 @@ public partial class MainWindow {
  void UpdateThemeLabels(){
   UpdateXmclLabels();var r=Application.Current.Resources;bool ru=Loc.Language=="ru";
   r["ExportLabel"]=ru?"Экспорт ZIP":"Export ZIP";r["ExportTip"]=ru?"Упаковать моды, конфиги, шейдеры и ресурспаки":"Pack mods, configs, shaders and resource packs";r["ExportCancelLabel"]=ru?"Отмена":"Cancel";
+  r["AllVersionsLabel"]=ru?"Все версии":"All versions";
   r["ThemeLabel"]=ru?"Оформление":"Appearance";
   r["ThemeHelp"]=ru?"Default — игровое лобби; Old theme — классический интерфейс.":"Default — game lobby; Old theme — classic interface.";
   r["PaletteLabel"]=ru?"Палитра Default":"Default palette";

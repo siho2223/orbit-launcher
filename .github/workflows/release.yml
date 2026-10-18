@@ -39,6 +39,8 @@ jobs:
         run: |
           ./scripts/verify-source.ps1
           ./scripts/build.ps1 -Publish -Test
+          dotnet run --project Tests -c Release -- --vanilla-metadata
+          if ($LASTEXITCODE -ne 0) { throw 'Installed metadata checks failed' }
           dotnet run --project Tests -c Release -- --quick-loader artifacts/ci-loader-tests
           if ($LASTEXITCODE -ne 0) { throw 'Loader checks failed' }
           dotnet run --project Tests -c Release -- --export artifacts/ci-export-tests

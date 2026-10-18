@@ -23,3 +23,9 @@
 .orbit-tile-art .ht-art{z-index:2;filter:drop-shadow(0 5px 0 #0005)}.orbit-tile-art .tile-copy{position:absolute;width:58px;height:58px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 4px 0 #0004)}.orbit-tile-art .one{left:10px;bottom:30px;transform:rotate(-18deg)}.orbit-tile-art .two{right:7px;bottom:45px;transform:rotate(17deg)}.orbit-tile-art.wardrobe .portrait{width:165px!important;height:123px!important;object-fit:cover!important;object-position:50% 15%;bottom:20px!important}.orbit-tile-art.server .one{transform:scale(.8);bottom:32px}.orbit-tile-art.server .two{transform:scale(.8);bottom:40px}.orbit-quick-actions .btn{flex:1}.orbit-modal-back{backdrop-filter:blur(3px)}
 
 :root:root .orbit-app .btn.forge{background-color:#a9b3bf;color:#131820}:root:root .orbit-app .btn.fabric{background-color:#bf8d56;color:#131820}
+
+.orbit-version-tabs{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}.orbit-version-tabs .btn{flex:1;min-width:90px}.orbit-version-tabs [aria-selected=true]{box-shadow:inset 0 -3px 0 #fff8}.orbit-version:disabled{opacity:.55;cursor:wait}
+
+.orbit-version-picker{display:flex;flex-direction:column;max-height:calc(100vh - 180px)}.orbit-version-picker .orbit-toolbar,.orbit-version-tabs,.orbit-quick-actions{flex-shrink:0}.orbit-version-picker .orbit-version-list{min-height:0;flex-shrink:1}
+
+.orbit-play:has(.orbit-version-picker){z-index:22}

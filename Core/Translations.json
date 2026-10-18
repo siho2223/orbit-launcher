@@ -317,5 +317,6 @@
   "Все версии Minecraft · просмотр каталога": "All Minecraft versions · browsing catalog",
   "Выбери версию игры в нижней панели для совместимости и установки дополнений.": "Select a game version below to filter compatible projects and install add-ons.",
   "Не удалось получить данные загрузчика": "Could not retrieve loader metadata",
-  "Загрузчик недоступен для выбранной версии Minecraft": "Loader is not available for the selected Minecraft version"
+  "Загрузчик недоступен для выбранной версии Minecraft": "Loader is not available for the selected Minecraft version",
+  "Проверяем поддерживаемые версии…": "Checking supported versions…"
 }
